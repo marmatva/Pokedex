@@ -14,6 +14,40 @@ let page = 0;
 
 //https://pokeapi.co/api/v2/pokemon/?offset=0&limit=16 Hay hasta el 898
 
+document.addEventListener('DOMContentLoaded', ()=>{updatePage()});
+
+nextButton.onclick=movePageForward;
+
+function movePageForward(){
+    page++;
+    updatePage();
+}
+
+function movePageBackwards(){
+    page--;
+    updatePage();
+}
+
+function updatePage(){
+    if(page===0){
+        previousButton.classList.add('not-visible');
+        previousButton.onclick=()=>{};
+    } else if(page===1){
+        previousButton.onclick=movePageBackwards;
+        (previousButton.classList.contains('not-visible')) ? previousButton.classList.remove('not-visible') : "";
+    }
+
+    let cards = document.querySelectorAll('.card');
+
+    if(cards.length>0){
+        cards.forEach(card=>{
+            card.remove();
+        })
+    }
+
+    getApiInfo();
+}
+
 function getApiInfo(){
     fetch(`https://pokeapi.co/api/v2/pokemon/?offset=${cardsPerPage*page}&limit=${cardsPerPage}`)
         .then(response => response.json())
@@ -22,6 +56,7 @@ function getApiInfo(){
 }
 
 function createCards(response){
+
     response.forEach( (pokemon) => {
         let url = pokemon.url;
         let pokemonId = url.replace("https://pokeapi.co/api/v2/pokemon/", "").replace("/", "");
@@ -55,28 +90,18 @@ function createCards(response){
 
 }
 
-document.addEventListener('DOMContentLoaded', ()=>{getApiInfo()});
-
-nextButton.onclick=movePageForward;
-
-function movePageForward(){
-    page++;
-    updatePage();
-}
-
-function movePageBackwards(){
-    page--;
-    updatePage();
-}
-
-function updatePage(){
-    if(page===0){
-        previousButton.classList.add('not-visible');
-        previousButton.onclick=()=>{};
-    } else if(page===1){
-        previousButton.onclick=movePageBackwards;
-        (previousButton.classList.contains('not-visible')) ? previousButton.classList.remove('not-visible') : "";
+cardsContainer.onclick=(e)=>{
+    if(!(e.target.tagName === 'SECTION')){
+        let target = (e.target.tagName === 'ARTICLE') ? e.target : e.target.parentElement;
+        getPokemonDetails(target);
     }
+}
 
-    getApiInfo();
+function getPokemonDetails(target){
+    let id = target.id.replace('pokemon-', '');
+    let url = `https://pokeapi.co/api/v2/pokemon/${id}/`
+    fetch(url)
+        .then(response => response.json())
+        .then(response => console.log(response))
+    console.log(url);
 }
