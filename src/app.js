@@ -12,6 +12,9 @@ let cardsPerPage = rows*columns;
 
 let page = 0;
 
+let overlayButton = document.querySelector('.overlay button');
+let overlay = document.querySelector('.overlay');
+
 //https://pokeapi.co/api/v2/pokemon/?offset=0&limit=16 Hay hasta el 898
 
 document.addEventListener('DOMContentLoaded', ()=>{updatePage()});
@@ -102,6 +105,14 @@ function getPokemonDetails(target){
     let url = `https://pokeapi.co/api/v2/pokemon/${id}/`
     fetch(url)
         .then(response => response.json())
-        .then(response => console.log(response))
-    console.log(url);
+        .then(response => showPokemonDetails(response))
+        .catch(error => console.log(error))
+}
+
+function showPokemonDetails(response){
+    overlay.classList.remove('translated');
+}
+
+overlayButton.onclick=()=>{
+    overlay.classList.add('translated');
 }
