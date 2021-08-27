@@ -55,4 +55,28 @@ function createCards(response){
 
 }
 
-getApiInfo();
+document.addEventListener('DOMContentLoaded', ()=>{getApiInfo()});
+
+nextButton.onclick=movePageForward;
+
+function movePageForward(){
+    page++;
+    updatePage();
+}
+
+function movePageBackwards(){
+    page--;
+    updatePage();
+}
+
+function updatePage(){
+    if(page===0){
+        previousButton.classList.add('not-visible');
+        previousButton.onclick=()=>{};
+    } else if(page===1){
+        previousButton.onclick=movePageBackwards;
+        (previousButton.classList.contains('not-visible')) ? previousButton.classList.remove('not-visible') : "";
+    }
+
+    getApiInfo();
+}
