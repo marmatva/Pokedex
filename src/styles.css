@@ -1,0 +1,66 @@
+:root{
+    --black: #000;
+
+}
+
+/* GENERAL */
+html{
+    font-size: 62.5%;
+}
+
+body{
+    box-sizing: border-box;
+}
+
+*, *::after, *::before{
+    box-sizing: inherit;
+}
+
+.body{
+    margin: 0;
+    padding: 0 2%;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+/* UTILITIES */
+.not-visible{
+    visibility: hidden;
+}
+
+h1{
+    font-size: 3rem;
+}
+
+main{
+    width: 90%;
+    height: auto;
+    margin: 0 auto;
+}
+
+.pager{
+    height: 5%;
+}
+
+.pager p{
+    margin: 0;
+}
+
+.cards-container{
+    height: 95%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, auto));
+    grid-template-rows: repeat(auto-fit, minmax(16rem, auto));
+    gap: 2rem;
+    place-items: center center;
+}
+
+.card{
+    width: 12rem;
+    height: 16rem;
+    border-radius: 2rem;
+    border: 1px solid var(--black);
+
+}
+
