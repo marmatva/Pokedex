@@ -14,6 +14,7 @@ let page = 0;
 
 let overlayButton = document.querySelector('.overlay button');
 let overlay = document.querySelector('.overlay');
+let pokemonDetailsContainer = document.querySelector('.pokemon-details');
 
 //https://pokeapi.co/api/v2/pokemon/?offset=0&limit=16 Hay hasta el 898
 
@@ -112,8 +113,19 @@ function getPokemonDetails(target){
 function showPokemonDetails(response){
     let id = response.id;
     let idString = id.toString();
+    
     while(idString.length<3){
         idString = "0"+idString;
+    }
+
+
+    if(pokemonDetailsContainer.children.length>1){
+        let childs = [...pokemonDetailsContainer.children];
+        childs.forEach(child => {
+            if(child.tagName!=="BUTTON"){
+                child.remove();
+            }
+        })   
     }
 
     let nameEl = document.createElement('H3');
