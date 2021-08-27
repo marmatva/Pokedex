@@ -110,6 +110,54 @@ function getPokemonDetails(target){
 }
 
 function showPokemonDetails(response){
+    let id = response.id;
+    let idString = id.toString();
+    while(idString.length<3){
+        idString = "0"+idString;
+    }
+
+    let nameEl = document.createElement('H3');
+    nameEl.appendChild(document.createTextNode(response.name));
+
+    let imageEl = document.createElement('IMG');
+    imageEl.src=`https://assets.pokemon.com/assets/cms2/img/pokedex/full/${idString}.png`;
+
+    let abilitiesEl = document.createElement('DIV');
+    let abilitiesArray = response.abilities;
+    abilitiesArray.forEach(abilityArray => {
+        let abilityEl = document.createElement('P');
+        abilityEl.appendChild(document.createTextNode(abilityArray.ability.name));
+        abilitiesEl.appendChild(abilityEl);
+    })
+
+    let heightEl = document.createElement('P');
+    let heightSpan = document.createElement('SPAN');
+    heightSpan.appendChild(document.createTextNode('Heigth: '));
+    heightEl.appendChild(heightSpan);
+    heightEl.appendChild(document.createTextNode(response.height));
+
+    let weightEl = document.createElement('P');
+    let weightSpan = document.createElement('SPAN');
+    weightSpan.appendChild(document.createTextNode('Weight: '));
+    weightEl.appendChild(weightSpan);
+    weightEl.appendChild(document.createTextNode(response.weight));
+
+    let typesEl = document.createElement('DIV');
+    typesResponseArray = response.types;
+    typesResponseArray.forEach(typeObject=>{
+        let typeEl = document.createElement('P');
+        typeEl.appendChild(document.createTextNode(typeObject.type.name));
+        typesEl.appendChild(typeEl);
+    })
+
+   
+    overlay.firstElementChild.appendChild(nameEl);
+    overlay.firstElementChild.appendChild(imageEl);
+    overlay.firstElementChild.appendChild(abilitiesEl);
+    overlay.firstElementChild.appendChild(heightEl);
+    overlay.firstElementChild.appendChild(weightEl);
+    overlay.firstElementChild.appendChild(typesEl);
+
     overlay.classList.remove('translated');
 }
 
