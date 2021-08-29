@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', ()=>{updatePage()});
 
 nextButton.onclick=movePageForward;
 
+window.onresize = redistributeGrid;
+
 function movePageForward(){
     page++;
     updatePage();

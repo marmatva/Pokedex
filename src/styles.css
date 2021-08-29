@@ -2,7 +2,32 @@
     --black: #000;
     --white: #FFF;
     --translucidBlack: rgba(0,0,0,0.4);
+    --mainRed: #CC0000;
+    --grayText: #555555;
 
+    --grayBackground: #a3a3a3;
+
+    --blueHover: #30a7d7;
+    --flexo-medium: 'Flexo Medium', Arial, sans-serif;
+
+    --type-bug: #8CB230;
+    --type-dark:#58575F;
+    --type-dragon: #0F6AC0;
+    --type-electric: #EED535;
+    --type-fairy: #ED6EC7;
+    --type-fighting: #D04164;
+    --type-fire: #FD7D24;
+    --type-flying: #748FC9;
+    --type-ghost: #556AAE;
+    --type-grass: #62B957;
+    --type-ground: #DD7748;
+    --type-ice: #61CEC0;
+    --type-normal: #9DA0AA;
+    --type-poison: #A552CC;
+    --type-psychic: #EA5D60;
+    --type-rock: #BAAB82;
+    --type-steel: #417D9A;
+    --type-water: #4A90DA;
 }
 
 /* GENERAL */
@@ -20,10 +45,11 @@ body{
 
 .body{
     margin: 0;
-    padding: 0 2%;
     display: grid;
     grid-template-rows: auto 1fr auto;
     position: relative; 
+    background-image: url(img/bkground.png);
+    background-position: bottom center;
 }
 
 /* UTILITIES */
@@ -39,8 +65,12 @@ body{
     transform: translateX(-100%) scale(0.5);
 }
 
-h1{
-    font-size: 3rem;
+a{
+    text-decoration: none;
+}
+
+a:visited{
+    color: inherit;
 }
 
 main{
@@ -49,16 +79,105 @@ main{
     margin: 0 auto;
 }
 
-.pager{
-    height: 5%;
+p, h1, h2, h3{
+    font-family: var(--flexo-medium);
 }
 
-.pager p{
+header{
+    background-color: var(--mainRed);
+    text-align: center;
+}
+
+header img{
+    position: relative;
+    height: 5.5rem;
+    top: 25%;
+}
+
+@media (min-width: 450px) {
+    header img{
+        height: 6rem;
+    }
+}
+@media (min-width: 600px) {
+    header img{
+        height: 7.5rem;
+        top: 20%;
+    }
+}
+
+.pager{
+    padding: clamp(1.5rem, 2%, 3rem);
+    box-sizing: content-box;
+    height: 5rem;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+
+.pager-background{
+    background-color: var(--mainRed);
+    position: absolute;
+    width: 100%;
+    height:40%;
+    top: 0;
+    left: 0;
+    z-index: -1;    
+    clip-path: polygon(0 0, 100% 0, 100% 0, 75% 0, 67% 100%, 33% 100%, 25% 0, 0 0);
+}
+
+
+.pager button *{
     margin: 0;
+    display: inline;
+    vertical-align: middle;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--white);
+    transition: color .3s;
+}
+
+
+svg{
+    height: 2.7rem;
+    width: 2.7rem;
+}
+
+
+.pager button{
+    padding: 1%;
+    width: clamp(5rem, 20%, 18.5rem);
+    display: flex;
+    justify-content: space-evenly; 
+    align-items: center;
+    border: none;
+    background-color: var(--grayBackground);
+    border-radius: 1rem;
+    transition: background-color .3s;
+}
+
+.pager button p{
+    display: none;
+}
+
+@media (min-width: 600px) {
+    .pager button p{
+        display: inline;
+    }
+}
+
+.pager button:hover{
+    cursor: pointer;
+    background-color: var(--blueHover);
+
+}
+
+.pager button:hover>*{
+    color:var(--white);
 }
 
 .cards-container{
-    height: 95%;
+    height: calc(100% - 8rem);
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(12rem, auto));
     grid-template-rows: repeat(auto-fit, minmax(16rem, auto));
@@ -70,42 +189,44 @@ main{
     width: 12rem;
     height: 16rem;
     border-radius: 2rem;
-    border: 1px solid var(--black);
+    background-color: var(--white);
     text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.24);
+    transition: box-shadow 0.3s cubic-bezier(.25,.8,.25,1);
 }
 
 .card:hover{    
     cursor: pointer;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 
 .card h2{
     text-transform: capitalize;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
 }
 
 .card p{
     margin: 0;
+    font-size: 1.2rem;
 }
 
 .overlay{
     position: absolute;
-
     width: 100%;
-    height: 100%;
-
+    height: 100vh;
     top: 0;
     left: 0;
-
     background-color: var(--translucidBlack);
-
     display: flex;
     align-items: center;
-
     transition: transform 1s;
 }
 
 .pokemon-details{
-    height: 75%;
-    width: 40%;
+    height: 85%;
+    width: 80%;
+    padding: 3% 2%;
     margin: 0 auto;
     border-radius: 1.5rem;
 
@@ -114,8 +235,22 @@ main{
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
+    justify-content: center;
 
     position: relative;
+}
+
+@media (min-width: 500px) {
+    .pokemon-details{
+        width: 60%;
+    }    
+}
+
+@media (min-width: 900px) {
+    .pokemon-details{
+        width: 45%;
+    }    
 }
 
 .pokemon-details button{
@@ -134,11 +269,113 @@ main{
     text-transform: uppercase;
 }
 
-.pokemon-details h3{
+.pokemon-details h2{
     text-transform: capitalize;    
+    font-size: 3rem;
+    margin: 1.5rem 0;
+}
+
+.pokemon-details h3{
+    font-size: 2rem;
+    margin: 0;
+    margin-bottom: 4%;
+}
+
+.pokemon-details p{
+    font-size: 1.8rem;
+    margin: 0;
 }
 
 .pokemon-details img{
     height: 40%;
+    margin-bottom: 1rem;
 }
 
+.pokemon-details div{
+    width: 100%;
+    margin: 2% 0;
+}
+
+.detail-info-div{
+    margin: 0;
+    display: flex;
+    justify-content:space-evenly;
+}
+
+.detail-info-div p{
+    flex: 1 1 1fr;
+}
+
+.types-div p{
+    border-radius: 1rem;
+    padding: 2% 5%;
+    display: inline;
+    margin: 0 10%;
+    color: var(--white);
+    font-weight: 700;
+    letter-spacing: 0.2rem;
+}
+
+footer{
+    padding: 2% 0;
+    font-size: 1.4rem;
+    text-align: center;
+}
+
+
+.type-bug{
+    background-color: var(--type-bug);
+}
+
+.type-dark{
+    background-color: var(--type-dark);
+}
+
+.type-dragon{
+    background-color: var(--type-dragon);
+}
+.type-electric{
+    background-color: var(--type-electric);
+}
+.type-fairy{
+    background-color: var(--type-fairy);
+}
+.type-fighting{
+    background-color: var(--type-fighting);
+}
+.type-flying{
+    background-color: var(--type-flying);
+}
+.type-fire{
+    background-color: var(--type-fire);
+}
+.type-ghost{
+    background-color: var(--type-ghost);
+}
+.type-grass{
+    background-color: var(--type-grass);
+}
+.type-ground{
+    background-color: var(--type-ground);
+}
+.type-ice{
+    background-color: var(--type-ice);
+}
+.type-normal{
+    background-color: var(--type-normal);
+}
+.type-poison{
+    background-color: var(--type-poison);
+}
+.type-psychic{
+    background-color: var(--type-psychic);
+}
+.type-rock{
+    background-color: var(--type-rock);
+}
+.type-steel{
+    background-color: var(--type-steel);
+}
+.type-water{
+    background-color: var(--type-water);
+}
