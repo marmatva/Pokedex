@@ -129,6 +129,9 @@ function getPokemonDetails(target){
 }
 
 function showPokemonDetails(response){
+    
+    removePreviousDetails();
+    
     let id = response.id;
     let idString = id.toString();
     
@@ -136,41 +139,64 @@ function showPokemonDetails(response){
         idString = "0"+idString;
     }
 
-
-    if(pokemonDetailsContainer.children.length>1){
-        let childs = [...pokemonDetailsContainer.children];
-        childs.forEach(child => {
-            if(child.tagName!=="BUTTON"){
-                child.remove();
-            }
-        })   
-    }
-
-    let nameEl = document.createElement('H3');
+    let nameEl = document.createElement('H2');
     nameEl.appendChild(document.createTextNode(response.name));
 
     let imageEl = document.createElement('IMG');
     imageEl.src=`https://assets.pokemon.com/assets/cms2/img/pokedex/full/${idString}.png`;
 
-    let abilitiesEl = document.createElement('DIV');
-    let abilitiesArray = response.abilities;
-    abilitiesArray.forEach(abilityArray => {
-        let abilityEl = document.createElement('P');
-        abilityEl.appendChild(document.createTextNode(abilityArray.ability.name));
-        abilitiesEl.appendChild(abilityEl);
-    })
+    let abilitiesEl = createAbilities(response.abilities)   
+    let physicalChar = createPhysicalChar(response.height, response.weight);
+    let typesEl = createTypes(response.types);
+
+   
+    overlay.firstElementChild.appendChild(imageEl);
+    overlay.firstElementChild.appendChild(nameEl);
+    overlay.firstElementChild.appendChild(abilitiesEl);
+    overlay.firstElementChild.appendChild(physicalChar);
+    overlay.firstElementChild.appendChild(typesEl);
+
+    overlay.classList.remove('translated');
+}
+
+overlayButton.onclick=()=>{
+    overlay.classList.add('translated');
+}
+
+function createPhysicalChar(height, weight){
+
+    let physicalChar=document.createElement('DIV');
+    let physicalCharHeading = document.createElement('H3');
+    let physicalCharInfo = document.createElement('DIV');
+    physicalCharInfo.classList.add('detail-info-div');
+    physicalCharHeading.appendChild(document.createTextNode('Physical Characteristics'));
+    physicalChar.appendChild(physicalCharHeading);
 
     let heightEl = document.createElement('P');
     let heightSpan = document.createElement('SPAN');
-    heightSpan.appendChild(document.createTextNode('Heigth: '));
+    heightSpan.appendChild(document.createTextNode(height));
     heightEl.appendChild(heightSpan);
-    heightEl.appendChild(document.createTextNode(response.height));
+    heightEl.appendChild(document.createTextNode(' dm'));
 
     let weightEl = document.createElement('P');
     let weightSpan = document.createElement('SPAN');
-    weightSpan.appendChild(document.createTextNode('Weight: '));
+    weightSpan.appendChild(document.createTextNode(weight));
     weightEl.appendChild(weightSpan);
-    weightEl.appendChild(document.createTextNode(response.weight));
+    weightEl.appendChild(document.createTextNode(' hg'));
+
+    physicalCharInfo.appendChild(heightEl);
+    physicalCharInfo.appendChild(weightEl);
+
+    physicalChar.appendChild(physicalCharInfo);
+    
+    return physicalChar;
+}
+
+function createAbilities(abilitiesArray){
+    let abilitiesEl = document.createElement('DIV');
+    let abilitiesHeading = document.createElement('H3');
+    abilitiesHeading.appendChild(document.createTextNode('Abilities'));
+    abilitiesEl.appendChild(abilitiesHeading);
     let abilitiesElInfo = document.createElement('DIV');
     abilitiesElInfo.classList.add('detail-info-div');
     abilitiesArray.forEach(abilityArray => {
