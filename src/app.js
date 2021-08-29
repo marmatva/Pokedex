@@ -32,13 +32,29 @@ function movePageBackwards(){
     updatePage();
 }
 
+function blockPagerButtons(){
+    previousButton.onclick=()=>{};
+    nextButton.onclick=()=>{};
+}
+
+function unblockPagerButtons(){
+    if(page===0){
+        nextButton.onclick=movePageForward;
+    } else{
+        nextButton.onclick=movePageForward;
+        previousButton.onclick=movePageBackwards;
+    }
+}
+
+
 function updatePage(){
+    blockPagerButtons();
     if(page===0){
         previousButton.classList.add('not-visible');
-        previousButton.onclick=()=>{};
     } else if(page===1){
-        previousButton.onclick=movePageBackwards;
-        (previousButton.classList.contains('not-visible')) ? previousButton.classList.remove('not-visible') : "";
+        if(previousButton.classList.contains('not-visible')){
+            previousButton.classList.remove('not-visible');
+        }
     }
 
     let cards = document.querySelectorAll('.card');
@@ -50,6 +66,7 @@ function updatePage(){
     }
 
     getApiInfo();
+
 }
 
 function getApiInfo(){
@@ -92,6 +109,7 @@ function createCards(response){
             .catch(error => console.log(error));
     })
 
+    unblockPagerButtons();
 }
 
 cardsContainer.onclick=(e)=>{
@@ -153,26 +171,50 @@ function showPokemonDetails(response){
     weightSpan.appendChild(document.createTextNode('Weight: '));
     weightEl.appendChild(weightSpan);
     weightEl.appendChild(document.createTextNode(response.weight));
+    let abilitiesElInfo = document.createElement('DIV');
+    abilitiesElInfo.classList.add('detail-info-div');
+    abilitiesArray.forEach(abilityArray => {
+        let abilityEl = document.createElement('P');
+        abilityEl.appendChild(document.createTextNode(abilityArray.ability.name));
+        abilitiesElInfo.appendChild(abilityEl);
+    })
 
+    abilitiesEl.appendChild(abilitiesElInfo);
+
+    return abilitiesEl;
+}
+
+function createTypes(typesResponseArray){
     let typesEl = document.createElement('DIV');
-    typesResponseArray = response.types;
+    typesEl.classList.add('detail-info-div');
+    typesEl.classList.add('types-div');
     typesResponseArray.forEach(typeObject=>{
         let typeEl = document.createElement('P');
         typeEl.appendChild(document.createTextNode(typeObject.type.name));
+        typeEl.classList.add(`type-${typeObject.type.name}`)
         typesEl.appendChild(typeEl);
     })
 
-   
-    overlay.firstElementChild.appendChild(nameEl);
-    overlay.firstElementChild.appendChild(imageEl);
-    overlay.firstElementChild.appendChild(abilitiesEl);
-    overlay.firstElementChild.appendChild(heightEl);
-    overlay.firstElementChild.appendChild(weightEl);
-    overlay.firstElementChild.appendChild(typesEl);
-
-    overlay.classList.remove('translated');
+    return typesEl;
 }
 
-overlayButton.onclick=()=>{
-    overlay.classList.add('translated');
+function removePreviousDetails(){
+    if(pokemonDetailsContainer.children.length>1){
+        let childs = [...pokemonDetailsContainer.children];
+        childs.forEach(child => {
+            if(child.tagName!=="BUTTON"){
+                child.remove();
+            }
+        })   
+    }
+}
+
+function redistributeGrid(){
+    let body = document.querySelector('body');
+    let newColumns = getComputedStyle(cardsContainer).getPropertyValue("grid-template-columns").split(" ").length;
+    if(newColumns<columns && body.classList.contains('vh-100')){
+        body.classList.remove('vh-100');
+    } else if(newColumns>=columns && !(body.classList.contains('vh-100'))){
+        body.classList.add('vh-100');
+    }
 }
