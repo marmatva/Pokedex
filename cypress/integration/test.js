@@ -1,12 +1,12 @@
 /// <reference types="Cypress" /> 
 const URL = "http://127.0.0.1:8080";
 
-describe('Test App first load', ()=>{
+describe('Test App', ()=>{
     let cardsPerPage;
     it('Asserts cards quantity', ()=>{
         cy.visit(URL);
 
-        cy.intercept('https://pokeapi.co/api/v2/pokemon/?offset=*').as('pokemonInfo')
+        cy.intercept(/^https:\/\/pokeapi\.co\/api\/v2\/pokemon\/\?offset=\d+&limit=\d+$/).as('pokemonInfo')
         cy.wait('@pokemonInfo');
 
         cy.get('.cards-container article').then(articles => { 
