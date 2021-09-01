@@ -1,14 +1,18 @@
-let cardsContainer = document.querySelector('.cards-container');
+const pokemonQuantity = 898+220;
 
-let previousButton = document.querySelector('#previous-page');
-let nextButton = document.querySelector('#next-page');
+const cardsContainer = document.querySelector('.cards-container');
 
-let pager = document.querySelector('.pager');
+const previousButton = document.querySelector('#previous-page');
+const nextButton = document.querySelector('#next-page');
 
-let rows = getComputedStyle(cardsContainer).getPropertyValue("grid-template-rows").split(" ").length;
-let columns = getComputedStyle(cardsContainer).getPropertyValue("grid-template-columns").split(" ").length;
+const pager = document.querySelector('.pager');
 
-let cardsPerPage = rows*columns; 
+const pageInput = document.querySelector('#requiredPage');
+const pagerIndicator = document.querySelector('.page-number');
+
+let rows;
+let columns;
+let cardsPerPage; 
 
 let page = 0;
 
@@ -18,11 +22,13 @@ let pokemonDetailsContainer = document.querySelector('.pokemon-details');
 
 //https://pokeapi.co/api/v2/pokemon/?offset=0&limit=16 Hay hasta el 898
 
-document.addEventListener('DOMContentLoaded', ()=>{updatePage()});
+document.addEventListener('DOMContentLoaded', ()=>{startApp()});
 
 nextButton.onclick=movePageForward;
 
 window.onresize = redistributeGrid;
+
+
 
 function movePageForward(){
     page++;
@@ -66,7 +72,7 @@ function updatePage(){
             card.remove();
         })
     }
-
+    document.querySelector('#requiredPage').value=page+1;
     getApiInfo();
 
 }
@@ -245,4 +251,23 @@ function redistributeGrid(){
     } else if(newColumns>=columns && !(body.classList.contains('vh-100'))){
         body.classList.add('vh-100');
     }
+}
+
+function startApp(){
+    rows = getComputedStyle(cardsContainer).getPropertyValue("grid-template-rows").split(" ").length;
+    columns = getComputedStyle(cardsContainer).getPropertyValue("grid-template-columns").split(" ").length;
+    cardsPerPage = rows*columns; 
+
+    let pages = Math.ceil(pokemonQuantity/cardsPerPage);
+    pageInput.max=pages;
+    pagerIndicator.innerHTML = pagerIndicator.innerHTML + pages;
+    
+    document.querySelector('#requiredPage').onchange=managePageInput;
+
+    updatePage();
+}
+
+function managePageInput(e){
+    page = e.target.value - 1;
+    updatePage();
 }
