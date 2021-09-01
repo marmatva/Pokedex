@@ -107,7 +107,7 @@ header img{
 }
 
 .pager{
-    padding: clamp(1.5rem, 2%, 3rem);
+    padding: 1.5rem;
     box-sizing: content-box;
     height: 5rem;
     display: flex;
@@ -203,10 +203,15 @@ svg{
 }
 
 .card{
-    width: 12rem;
-    height: 16rem;
+    width: 13rem;
+    height: 18rem;
     border-radius: 2rem;
+    padding: .3rem;
     background-color: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
     text-align: center;
     box-shadow: 0 2px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.24);
     transition: box-shadow 0.3s cubic-bezier(.25,.8,.25,1);
@@ -220,12 +225,16 @@ svg{
 .card h2{
     text-transform: capitalize;
     font-size: 1.8rem;
-    margin-bottom: .5rem;
+    margin: .3rem 0;
 }
 
 .card p{
     margin: 0;
     font-size: 1.2rem;
+}
+
+.card img{
+    height: 9.6rem;
 }
 
 .overlay{
@@ -334,11 +343,10 @@ svg{
 }
 
 footer{
-    padding: 2% 0;
+    padding: min(2%, 1.5rem) 0;
     font-size: 1.4rem;
     text-align: center;
 }
-
 
 .type-bug{
     background-color: var(--type-bug);
