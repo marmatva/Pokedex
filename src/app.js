@@ -15,6 +15,7 @@ let columns;
 let cardsPerPage; 
 
 let page = 0;
+let availablePages;
 
 let overlayButton = document.querySelector('.overlay button');
 let overlay = document.querySelector('.overlay');
@@ -59,11 +60,20 @@ function updatePage(){
     blockPagerButtons();
     if(page===0){
         previousButton.classList.add('not-visible');
-    } else if(page===1){
+    } else {
         if(previousButton.classList.contains('not-visible')){
             previousButton.classList.remove('not-visible');
         }
     }
+
+    if (page===(availablePages-1)) {
+        nextButton.classList.add('not-visible');
+    } else {
+        if(nextButton.classList.contains('not-visible')){
+            nextButton.classList.remove('not-visible');
+        }
+    }
+    
 
     let cards = document.querySelectorAll('.card');
 
@@ -258,9 +268,10 @@ function startApp(){
     columns = getComputedStyle(cardsContainer).getPropertyValue("grid-template-columns").split(" ").length;
     cardsPerPage = rows*columns; 
 
-    let pages = Math.ceil(pokemonQuantity/cardsPerPage);
-    pageInput.max=pages;
-    pagerIndicator.innerHTML = pagerIndicator.innerHTML + pages;
+    availablePages = Math.ceil(pokemonQuantity/cardsPerPage);
+
+    pageInput.max=availablePages;
+    pagerIndicator.innerHTML = pagerIndicator.innerHTML + availablePages;
     
     document.querySelector('#requiredPage').onchange=managePageInput;
 
