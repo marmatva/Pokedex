@@ -262,10 +262,11 @@ svg{
     flex-direction: column;
     align-items: center;
     text-align: center;
-    justify-content: center;
+    justify-content: space-between;
 
     position: relative;
 }
+
 
 @media (min-width: 500px) {
     .pokemon-details{
@@ -276,6 +277,7 @@ svg{
 @media (min-width: 900px) {
     .pokemon-details{
         width: 45%;
+        justify-content: center;
     }    
 }
 .overlay>button{
@@ -444,4 +446,55 @@ footer{
 }
 .type-water{
     background-color: var(--type-water);
+}
+
+.warning-container{
+    background-color: var(--mainRed);
+    width: 30%;
+    height: 7.5%;
+    position: absolute;
+    top: 25%;
+    left: 35%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.3rem 1rem;
+
+    animation: warning 2s;
+}
+
+.warning-container p{
+    color: var(--white);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+@media (min-width: 600px) {
+    .warning-container p{
+        font-size: 1.5rem;
+    }
+}
+
+@keyframes warning {
+    0%{
+        top: 10%;
+        opacity: 0;
+    }
+
+    25%{
+        top: 25%;
+        opacity: 1;
+    }
+
+    75%{
+        transform: scale(1);
+        opacity:1;
+    }
+
+    100%{
+        transform: scale(0);
+        opacity: 0;
+    }
 }
