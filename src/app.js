@@ -1,63 +1,78 @@
-let cardsContainer = document.querySelector('.cards-container');
+const pokemonQuantity = 898;
 
-let previousButton = document.querySelector('#previous-page');
-let nextButton = document.querySelector('#next-page');
+const cardsContainer = document.querySelector('.cards-container');
 
-let pager = document.querySelector('.pager');
+const previousButton = document.querySelector('#previous-page');
+const nextButton = document.querySelector('#next-page');
 
-let rows = getComputedStyle(cardsContainer).getPropertyValue("grid-template-rows").split(" ").length;
-let columns = getComputedStyle(cardsContainer).getPropertyValue("grid-template-columns").split(" ").length;
+const previousPokemonButton = document.querySelector('#previous-pokemon');
+const nextPokemonButton = document.querySelector('#next-pokemon');
 
-let cardsPerPage = rows*columns; 
+let pageInput = document.querySelector('#requiredPage');
+
+let rows;
+let columns;
+let cardsPerPage; 
 
 let page = 0;
+let availablePages;
 
 let overlayButton = document.querySelector('.overlay button');
 let overlay = document.querySelector('.overlay');
 let pokemonDetailsContainer = document.querySelector('.pokemon-details');
 
-//https://pokeapi.co/api/v2/pokemon/?offset=0&limit=16 Hay hasta el 898
-
-document.addEventListener('DOMContentLoaded', ()=>{updatePage()});
-
 nextButton.onclick=movePageForward;
+previousButton.onclick=movePageBackwards;
+
+previousPokemonButton.onclick=getSiblingDetails;
+nextPokemonButton.onclick=getSiblingDetails;
+
+buttonsBlocked = true;
 
 window.onresize = redistributeGrid;
 
+pageInput.onchange=managePageInput;
+
+document.addEventListener('DOMContentLoaded', ()=>{startApp()});
+
+
+
 function movePageForward(){
+    if(buttonsBlocked){
+        return;
+    }
     page++;
     updatePage();
 }
 
 function movePageBackwards(){
+    if(buttonsBlocked){
+        return;
+    }
     page--;
     updatePage();
 }
 
-function blockPagerButtons(){
-    previousButton.onclick=()=>{};
-    nextButton.onclick=()=>{};
-}
-
-function unblockPagerButtons(){
-    if(page===0){
-        nextButton.onclick=movePageForward;
-    } else{
-        nextButton.onclick=movePageForward;
-        previousButton.onclick=movePageBackwards;
-    }
-}
-
 
 function updatePage(){
-    blockPagerButtons();
+    buttonsBlocked = true;
+    pageInput.disabled = true;
     if(page===0){
         previousButton.classList.add('not-visible');
-    } else if(page===1){
+    } else {
         if(previousButton.classList.contains('not-visible')){
             previousButton.classList.remove('not-visible');
         }
     }
+
+    if (page===(availablePages-1)) {
+        nextButton.classList.add('not-visible');
+    } else {
+        if(nextButton.classList.contains('not-visible')){
+            nextButton.classList.remove('not-visible');
+        }
+    }
+    
 
     let cards = document.querySelectorAll('.card');
 
@@ -67,6 +82,7 @@ function updatePage(){
         })
     }
 
+    pageInput.value=page+1;
     getApiInfo();
 
 }
@@ -83,7 +99,11 @@ function createCards(response){
     response.forEach( (pokemon) => {
         let url = pokemon.url;
         let pokemonId = url.replace("https://pokeapi.co/api/v2/pokemon/", "").replace("/", "");
-       
+        
+        if(pokemonId>pokemonQuantity){
+            return;
+        }
+
         let card = document.createElement('ARTICLE');
         card.classList.add('card');
         let id = `pokemon-${pokemonId}`;
@@ -96,6 +116,7 @@ function createCards(response){
         number.appendChild(document.createTextNode(`Nº ${pokemonId}`));
         
         let image = document.createElement('IMG');
+        image.alt=`${pokemon.name} Image.`
 
         card.appendChild(name);
         card.appendChild(number);
@@ -111,7 +132,8 @@ function createCards(response){
             .catch(error => console.log(error));
     })
 
-    unblockPagerButtons();
+    buttonsBlocked = false;
+    pageInput.disabled = false;
 }
 
 cardsContainer.onclick=(e)=>{
@@ -146,17 +168,20 @@ function showPokemonDetails(response){
 
     let imageEl = document.createElement('IMG');
     imageEl.src=`https://assets.pokemon.com/assets/cms2/img/pokedex/full/${idString}.png`;
+    imageEl.alt=`${response.name} Image.`
 
     let abilitiesEl = createAbilities(response.abilities)   
     let physicalChar = createPhysicalChar(response.height, response.weight);
     let typesEl = createTypes(response.types);
 
-   
+    overlay.firstElementChild.id=`details-pokemon-${id}`;
     overlay.firstElementChild.appendChild(imageEl);
     overlay.firstElementChild.appendChild(nameEl);
     overlay.firstElementChild.appendChild(abilitiesEl);
     overlay.firstElementChild.appendChild(physicalChar);
     overlay.firstElementChild.appendChild(typesEl);
+
+    checkSiblingButtonsVisibility(id);
 
     overlay.classList.remove('translated');
 }
@@ -244,5 +269,56 @@ function redistributeGrid(){
         body.classList.remove('vh-100');
     } else if(newColumns>=columns && !(body.classList.contains('vh-100'))){
         body.classList.add('vh-100');
+    }
+}
+
+function startApp(){
+    rows = getComputedStyle(cardsContainer).getPropertyValue("grid-template-rows").split(" ").length;
+    columns = getComputedStyle(cardsContainer).getPropertyValue("grid-template-columns").split(" ").length;
+    cardsPerPage = rows*columns; 
+
+    availablePages = Math.ceil(pokemonQuantity/cardsPerPage);
+
+    pageInput.max=availablePages;
+
+    let pagerIndicator = document.querySelector('#totalPages');
+    pagerIndicator.textContent = availablePages;
+
+    updatePage();
+}
+
+function managePageInput(e){
+    page = e.target.value - 1;
+    updatePage();
+}
+
+function getSiblingDetails(e){
+    let id = pokemonDetailsContainer.id.replace("details-pokemon-", "");
+
+    if(e.target.classList.contains('next-pokemon') ){
+        id++;
+    } else{
+        id--;
+    }
+
+    let url = `https://pokeapi.co/api/v2/pokemon/${id}/`
+    fetch(url)
+        .then(response => response.json())
+        .then(response => showPokemonDetails(response))
+        .catch(error => console.log(error))
+}
+
+function checkSiblingButtonsVisibility(id){
+    if(id===1){
+        previousPokemonButton.classList.add('not-visible');
+    } else if(id===pokemonQuantity){
+        nextPokemonButton.classList.add('not-visible');
+    } else{
+        let notVisible = document.querySelectorAll('.pokemon-button.not-visible');
+        if(notVisible.length>0){
+            notVisible.forEach( button =>{
+                button.classList.remove('not-visible');
+            })
+        }
     }
 }
