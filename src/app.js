@@ -288,7 +288,18 @@ function startApp(){
 }
 
 function managePageInput(e){
+    if(e.target.value<1) {
+        pageInput.value=page+1;
+        showWarning('La pagina debe ser igual o meyor a 1');
+        return;
+    } else if (e.target.value>availablePages){
+        pageInput.value=page+1;
+        showWarning(`La pagina debe ser menor o igual a ${availablePages}`);
+        return;
+    }
+
     page = e.target.value - 1;
+
     updatePage();
 }
 
@@ -321,4 +332,20 @@ function checkSiblingButtonsVisibility(id){
             })
         }
     }
+}
+
+function showWarning(message){
+    let warningContainer = document.createElement('DIV');
+    warningContainer.classList.add('warning-container');
+    let warningP = document.createElement('P');
+    let warningText = document.createTextNode(message);
+
+    warningP.appendChild(warningText);
+    warningContainer.appendChild(warningP);
+
+    document.querySelector('body').appendChild(warningContainer);
+
+    setTimeout(()=>{
+        warningContainer.remove();
+    },2000)
 }
