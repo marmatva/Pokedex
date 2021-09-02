@@ -5,10 +5,7 @@ const cardsContainer = document.querySelector('.cards-container');
 const previousButton = document.querySelector('#previous-page');
 const nextButton = document.querySelector('#next-page');
 
-const pager = document.querySelector('.pager');
-
-const pageInput = document.querySelector('#requiredPage');
-const pagerIndicator = document.querySelector('.page-number');
+let pageInput = document.querySelector('#requiredPage');
 
 let rows;
 let columns;
@@ -21,43 +18,38 @@ let overlayButton = document.querySelector('.overlay button');
 let overlay = document.querySelector('.overlay');
 let pokemonDetailsContainer = document.querySelector('.pokemon-details');
 
-//https://pokeapi.co/api/v2/pokemon/?offset=0&limit=16 Hay hasta el 898
-
-document.addEventListener('DOMContentLoaded', ()=>{startApp()});
-
 nextButton.onclick=movePageForward;
+previousButton.onclick=movePageBackwards;
+
+buttonsBlocked = true;
 
 window.onresize = redistributeGrid;
+
+pageInput.onchange=managePageInput;
+
+document.addEventListener('DOMContentLoaded', ()=>{startApp()});
 
 
 
 function movePageForward(){
+    if(buttonsBlocked){
+        return;
+    }
     page++;
     updatePage();
 }
 
 function movePageBackwards(){
+    if(buttonsBlocked){
+        return;
+    }
     page--;
     updatePage();
 }
 
-function blockPagerButtons(){
-    previousButton.onclick=()=>{};
-    nextButton.onclick=()=>{};
-}
-
-function unblockPagerButtons(){
-    if(page===0){
-        nextButton.onclick=movePageForward;
-    } else{
-        nextButton.onclick=movePageForward;
-        previousButton.onclick=movePageBackwards;
-    }
-}
-
 
 function updatePage(){
-    blockPagerButtons();
+    buttonsBlocked = true;
     if(page===0){
         previousButton.classList.add('not-visible');
     } else {
@@ -82,7 +74,8 @@ function updatePage(){
             card.remove();
         })
     }
-    document.querySelector('#requiredPage').value=page+1;
+
+    pageInput.value=page+1;
     getApiInfo();
 
 }
@@ -127,7 +120,7 @@ function createCards(response){
             .catch(error => console.log(error));
     })
 
-    unblockPagerButtons();
+    buttonsBlocked = false;
 }
 
 cardsContainer.onclick=(e)=>{
@@ -271,9 +264,9 @@ function startApp(){
     availablePages = Math.ceil(pokemonQuantity/cardsPerPage);
 
     pageInput.max=availablePages;
-    pagerIndicator.innerHTML = pagerIndicator.innerHTML + availablePages;
-    
-    document.querySelector('#requiredPage').onchange=managePageInput;
+
+    let pagerIndicator = document.querySelector('#totalPages');
+    pagerIndicator.textContent = availablePages;
 
     updatePage();
 }

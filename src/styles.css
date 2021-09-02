@@ -314,10 +314,9 @@ svg{
 
 .pokemon-details img{
     height: 40%;
-    margin-bottom: 1rem;
 }
 
-.pokemon-details div{
+.pokemon-details>div{
     width: 100%;
     margin: 2% 0;
 }
@@ -326,10 +325,6 @@ svg{
     margin: 0;
     display: flex;
     justify-content:space-evenly;
-}
-
-.detail-info-div p{
-    flex: 1 1 1fr;
 }
 
 .types-div p{
