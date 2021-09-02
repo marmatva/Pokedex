@@ -5,6 +5,9 @@ const cardsContainer = document.querySelector('.cards-container');
 const previousButton = document.querySelector('#previous-page');
 const nextButton = document.querySelector('#next-page');
 
+const previousPokemonButton = document.querySelector('#previous-pokemon');
+const nextPokemonButton = document.querySelector('#next-pokemon');
+
 let pageInput = document.querySelector('#requiredPage');
 
 let rows;
@@ -20,6 +23,9 @@ let pokemonDetailsContainer = document.querySelector('.pokemon-details');
 
 nextButton.onclick=movePageForward;
 previousButton.onclick=movePageBackwards;
+
+previousPokemonButton.onclick=getSiblingDetails;
+nextPokemonButton.onclick=getSiblingDetails;
 
 buttonsBlocked = true;
 
@@ -50,6 +56,7 @@ function movePageBackwards(){
 
 function updatePage(){
     buttonsBlocked = true;
+    pageInput.disabled = true;
     if(page===0){
         previousButton.classList.add('not-visible');
     } else {
@@ -105,6 +112,7 @@ function createCards(response){
         number.appendChild(document.createTextNode(`Nº ${pokemonId}`));
         
         let image = document.createElement('IMG');
+        image.alt=`${pokemon.name} Image.`
 
         card.appendChild(name);
         card.appendChild(number);
@@ -121,6 +129,7 @@ function createCards(response){
     })
 
     buttonsBlocked = false;
+    pageInput.disabled = false;
 }
 
 cardsContainer.onclick=(e)=>{
@@ -155,17 +164,20 @@ function showPokemonDetails(response){
 
     let imageEl = document.createElement('IMG');
     imageEl.src=`https://assets.pokemon.com/assets/cms2/img/pokedex/full/${idString}.png`;
+    imageEl.alt=`${response.name} Image.`
 
     let abilitiesEl = createAbilities(response.abilities)   
     let physicalChar = createPhysicalChar(response.height, response.weight);
     let typesEl = createTypes(response.types);
 
-   
+    overlay.firstElementChild.id=`details-pokemon-${id}`;
     overlay.firstElementChild.appendChild(imageEl);
     overlay.firstElementChild.appendChild(nameEl);
     overlay.firstElementChild.appendChild(abilitiesEl);
     overlay.firstElementChild.appendChild(physicalChar);
     overlay.firstElementChild.appendChild(typesEl);
+
+    checkSiblingButtonsVisibility(id);
 
     overlay.classList.remove('translated');
 }
@@ -274,4 +286,41 @@ function startApp(){
 function managePageInput(e){
     page = e.target.value - 1;
     updatePage();
+}
+
+function getSiblingDetails(e){
+    let id = pokemonDetailsContainer.id.replace("details-pokemon-", "");
+
+    if(e.target.classList.contains('next-pokemon') ){
+        id++;
+        if(id === (898+1)){
+            id=10001;
+        }
+    } else{
+        id--;
+        if(id === (10001-1)){
+            id=898;
+        }
+    }
+
+    let url = `https://pokeapi.co/api/v2/pokemon/${id}/`
+    fetch(url)
+        .then(response => response.json())
+        .then(response => showPokemonDetails(response))
+        .catch(error => console.log(error))
+}
+
+function checkSiblingButtonsVisibility(id){
+    if(id===1){
+        previousPokemonButton.classList.add('not-visible');
+    } else if(id===10220){
+        nextPokemonButton.classList.add('not-visible');
+    } else{
+        let notVisible = document.querySelectorAll('.pokemon-button.not-visible');
+        if(notVisible.length>0){
+            notVisible.forEach( button =>{
+                button.classList.remove('not-visible');
+            })
+        }
+    }
 }

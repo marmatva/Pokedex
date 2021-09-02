@@ -278,6 +278,48 @@ svg{
         width: 45%;
     }    
 }
+.overlay>button{
+    color: var(--white);
+    background: none;
+    border: none;
+    position: absolute;
+}
+
+.overlay>button:hover{
+    cursor: pointer;
+}
+
+.overlay svg{
+    height: 3.5rem;
+    width: 3.5rem;
+}
+
+#next-pokemon{
+    top: calc(50% - (5rem/2));
+    right: .5%;
+}
+
+#previous-pokemon{
+    top: calc(50% - (5rem/2));
+    left: .5%;
+}
+@media (min-width: 500px) {
+    .overlay svg{
+        height: 5rem;
+        width: 5rem;
+    }
+    
+    #next-pokemon{
+        top: calc(50% - (5rem/2));
+        right: 5%;
+    }
+    
+    #previous-pokemon{
+        top: calc(50% - (5rem/2));
+        left: 5%;
+    }
+}
+
 
 .pokemon-details button{
     position: absolute;
@@ -289,6 +331,10 @@ svg{
 
     right: 3%;
     top: 3.5%;
+}
+
+.pokemon-details button:hover{
+    cursor: pointer;
 }
 
 .pokemon-details p::first-letter{
