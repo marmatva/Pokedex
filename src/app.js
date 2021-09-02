@@ -1,4 +1,4 @@
-const pokemonQuantity = 898+220;
+const pokemonQuantity = 898;
 
 const cardsContainer = document.querySelector('.cards-container');
 
@@ -99,7 +99,11 @@ function createCards(response){
     response.forEach( (pokemon) => {
         let url = pokemon.url;
         let pokemonId = url.replace("https://pokeapi.co/api/v2/pokemon/", "").replace("/", "");
-       
+        
+        if(pokemonId>pokemonQuantity){
+            return;
+        }
+
         let card = document.createElement('ARTICLE');
         card.classList.add('card');
         let id = `pokemon-${pokemonId}`;
@@ -293,14 +297,8 @@ function getSiblingDetails(e){
 
     if(e.target.classList.contains('next-pokemon') ){
         id++;
-        if(id === (898+1)){
-            id=10001;
-        }
     } else{
         id--;
-        if(id === (10001-1)){
-            id=898;
-        }
     }
 
     let url = `https://pokeapi.co/api/v2/pokemon/${id}/`
@@ -313,7 +311,7 @@ function getSiblingDetails(e){
 function checkSiblingButtonsVisibility(id){
     if(id===1){
         previousPokemonButton.classList.add('not-visible');
-    } else if(id===10220){
+    } else if(id===pokemonQuantity){
         nextPokemonButton.classList.add('not-visible');
     } else{
         let notVisible = document.querySelectorAll('.pokemon-button.not-visible');
