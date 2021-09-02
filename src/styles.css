@@ -262,10 +262,11 @@ svg{
     flex-direction: column;
     align-items: center;
     text-align: center;
-    justify-content: center;
+    justify-content: space-between;
 
     position: relative;
 }
+
 
 @media (min-width: 500px) {
     .pokemon-details{
@@ -276,6 +277,7 @@ svg{
 @media (min-width: 900px) {
     .pokemon-details{
         width: 45%;
+        justify-content: center;
     }    
 }
 .overlay>button{
