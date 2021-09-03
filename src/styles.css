@@ -73,6 +73,15 @@ a:visited{
     color: inherit;
 }
 
+button{
+    background: none;
+    border: none;
+}
+
+button *{
+    vertical-align: middle;
+}
+
 main{
     width: 90%;
     height: auto;
@@ -155,7 +164,7 @@ header img{
 }
 
 
-svg{
+.pager button>svg{
     height: 2.7rem;
     width: 2.7rem;
 }
@@ -282,16 +291,15 @@ svg{
 }
 .overlay>button{
     color: var(--white);
-    background: none;
-    border: none;
     position: absolute;
+    padding: 0;
 }
 
 .overlay>button:hover{
     cursor: pointer;
 }
 
-.overlay svg{
+.overlay>button svg{
     height: 3.5rem;
     width: 3.5rem;
 }
@@ -303,10 +311,10 @@ svg{
 
 #previous-pokemon{
     top: calc(50% - (5rem/2));
-    left: .5%;
+    left: .2%;
 }
 @media (min-width: 500px) {
-    .overlay svg{
+    .overlay>button svg{
         height: 5rem;
         width: 5rem;
     }
@@ -323,10 +331,8 @@ svg{
 }
 
 
-.pokemon-details button{
+.pokemon-details .close-button{
     position: absolute;
-    border: none;
-    background: none;
 
     font-size: 2rem;
     font-weight: 700;
@@ -335,7 +341,7 @@ svg{
     top: 3.5%;
 }
 
-.pokemon-details button:hover{
+.pokemon-details .close-button:hover{
     cursor: pointer;
 }
 
@@ -350,13 +356,13 @@ svg{
 }
 
 .pokemon-details h3{
-    font-size: 2rem;
+    font-size: 2.2rem;
     margin: 0;
     margin-bottom: 4%;
 }
 
 .pokemon-details p{
-    font-size: 1.8rem;
+    font-size: 2rem;
     margin: 0;
 }
 
@@ -375,15 +381,32 @@ svg{
     justify-content:space-evenly;
 }
 
-.types-div p{
+.types-div div{
+    display: flex;
+    justify-content: space-between;    
     border-radius: 1rem;
-    padding: 2% 5%;
-    display: inline;
-    margin: 0 10%;
+    padding: 2% 3%;
     color: var(--white);
+}
+
+.types-div p{
     font-weight: 700;
     letter-spacing: 0.2rem;
 }
+
+.types-div button{
+    padding: 0;
+    padding-left: 1rem;
+}
+
+.types-div button:hover{
+    cursor: pointer;
+}
+
+.types-div svg{
+    color: var(--white);
+}
+
 
 footer{
     padding: min(2%, 1.5rem) 0;
@@ -393,6 +416,7 @@ footer{
 
 .type-bug{
     background-color: var(--type-bug);
+    
 }
 
 .type-dark{
