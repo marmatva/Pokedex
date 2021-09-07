@@ -187,12 +187,23 @@ function showPokemonDetails(response){
 }
 
 overlayButton.onclick=()=>{
-    overlay.classList.add('translated');
+    overlay.classList.add('translated');   
+    verifyCurrentPage();
+}
+
+function verifyCurrentPage(){
+    let id = parseInt(overlay.firstElementChild.id.replace("details-pokemon-",""));
+    let correctPage = Math.floor(id/cardsPerPage);
+    if(correctPage!==page){
+        page=correctPage;
+        updatePage();
+    } 
 }
 
 function createPhysicalChar(height, weight){
 
     let physicalChar=document.createElement('DIV');
+    physicalChar.classList.add('pokemon-details-div');
     let physicalCharHeading = document.createElement('H3');
     let physicalCharInfo = document.createElement('DIV');
     physicalCharInfo.classList.add('detail-info-div');
@@ -221,6 +232,7 @@ function createPhysicalChar(height, weight){
 
 function createAbilities(abilitiesArray){
     let abilitiesEl = document.createElement('DIV');
+    abilitiesEl.classList.add('pokemon-details-div');
     let abilitiesHeading = document.createElement('H3');
     abilitiesHeading.appendChild(document.createTextNode('Abilities'));
     abilitiesEl.appendChild(abilitiesHeading);
@@ -239,13 +251,26 @@ function createAbilities(abilitiesArray){
 
 function createTypes(typesResponseArray){
     let typesEl = document.createElement('DIV');
-    typesEl.classList.add('detail-info-div');
+    typesEl.classList.add('detail-info-div'); // BORRAR???
     typesEl.classList.add('types-div');
+    typesEl.classList.add('pokemon-details-div');
+
     typesResponseArray.forEach(typeObject=>{
+        let typeContainer = document.createElement('DIV');
         let typeEl = document.createElement('P');
         typeEl.appendChild(document.createTextNode(typeObject.type.name));
-        typeEl.classList.add(`type-${typeObject.type.name}`)
-        typesEl.appendChild(typeEl);
+        let id = typeObject.type.url.replace("https://pokeapi.co/api/v2/","");
+        let button = document.createElement('BUTTON');
+        button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle-fill" viewBox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247zm2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z"/>
+        </svg>`
+        button.id = id;
+        button.addEventListener('click', getTypeDetails);
+        typeContainer.appendChild(typeEl);
+        typeContainer.appendChild(button);
+        typeContainer.classList.add(`type-${typeObject.type.name}`);
+
+        typesEl.appendChild(typeContainer);
     })
 
     return typesEl;
@@ -313,6 +338,12 @@ function getSiblingDetails(e){
     }
 
     let url = `https://pokeapi.co/api/v2/pokemon/${id}/`
+    
+    let typeDetails=document.querySelector('.type-details')
+    if(typeDetails){
+        pullOutTypeDetails();
+    }
+
     fetch(url)
         .then(response => response.json())
         .then(response => showPokemonDetails(response))
@@ -349,3 +380,107 @@ function showWarning(message){
         warningContainer.remove();
     },2000)
 }
+
+function getTypeDetails(e){
+    let target = e.target;
+
+    while(target.tagName !== 'BUTTON'){
+        target = target.parentElement;
+    }
+
+    let id = target.id;
+
+    fetch(`https://pokeapi.co/api/v2/${id}`)
+        .then(response => response.json())
+        .then(response => showTypeDetails(response))
+        .catch(error => console.log(error));
+    
+}
+
+function showTypeDetails(response){
+    let damageRelations = response.damage_relations;
+
+    let typeDetailsContainer = document.createElement('DIV');
+    typeDetailsContainer.classList.add('type-details');
+
+    let closeButton = document.createElement('BUTTON');
+    closeButton.appendChild(document.createTextNode('X'));
+    closeButton.addEventListener('click', pullOutTypeDetails);
+    closeButton.classList.add('close-button');
+
+    let typeMainHeading = document.createElement('H2');
+    typeMainHeading.appendChild(document.createTextNode(response.name));
+
+    let strengthHeading = document.createElement('H3'); 
+    strengthHeading.appendChild(document.createTextNode('Strengths')); 
+
+    let strengthAttackArray = [...damageRelations.double_damage_to];
+    let strengthDefenseArray = [...damageRelations.no_damage_from, ...damageRelations.half_damage_from];
+
+    let strengthContainer = createStrengthDetailsContainer(strengthAttackArray, strengthDefenseArray);
+
+    let weakHeading = document.createElement('H3');
+    weakHeading.appendChild(document.createTextNode('Weaknesses'));
+
+    let weakAttackArray = [...damageRelations.half_damage_to, ...damageRelations.no_damage_to ];
+    let weakDefenseArray = [...damageRelations.double_damage_from];
+
+    let weakContainer = createStrengthDetailsContainer(weakAttackArray, weakDefenseArray);    
+
+    typeDetailsContainer.appendChild(closeButton);
+    typeDetailsContainer.appendChild(typeMainHeading);
+    typeDetailsContainer.appendChild(strengthHeading);
+    typeDetailsContainer.appendChild(strengthContainer);
+    typeDetailsContainer.appendChild(weakHeading);
+    typeDetailsContainer.appendChild(weakContainer);
+
+    pokemonDetailsContainer.appendChild(typeDetailsContainer);
+
+}
+
+function createDamageRelationContainer(relationsArray){
+    let container = document.createElement('DIV');
+    container.classList.add('related-types-container')
+
+    relationsArray.forEach( typeObject =>{
+        let typeEl = document.createElement('P');
+        typeEl.appendChild(document.createTextNode(typeObject.name));
+        typeEl.classList.add(`type-${typeObject.name}`);
+
+        container.appendChild(typeEl);
+    })
+
+    return container;
+}
+
+function createStrengthDetailsContainer(firstArray, secondArray){
+    let attackHeading = document.createElement('H4');
+    attackHeading.appendChild(document.createTextNode('Attack'));
+    let defenseHeading = document.createElement('H4');
+    defenseHeading.appendChild(document.createTextNode('Defense'));
+
+    let strengthHeading = document.createElement('H3');
+    strengthHeading.appendChild(document.createTextNode('Strengths'));
+    let strengthContainer = document.createElement('DIV');
+    strengthContainer.classList.add('relations-type-container');
+
+    let attackContainer = createDamageRelationContainer(firstArray);
+    let defenseContainer = createDamageRelationContainer(secondArray);
+    
+    strengthContainer.appendChild(attackHeading);
+    strengthContainer.appendChild(defenseHeading);
+    strengthContainer.appendChild(attackContainer);
+    strengthContainer.appendChild(defenseContainer);
+
+    return strengthContainer;
+}
+
+function pullOutTypeDetails(){
+    let typeDetails = document.querySelector('.type-details');
+    typeDetails.classList.add('pull-out');
+
+    setTimeout(()=>{
+        typeDetails.remove();
+    }, 500);
+}
+
