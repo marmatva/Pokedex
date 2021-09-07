@@ -117,10 +117,15 @@ function createCards(response){
         
         let image = document.createElement('IMG');
         image.alt=`${pokemon.name} Image.`
+        image.classList.add('loading');
 
+        let loadingDiv = document.createElement('DIV');
+        loadingDiv.classList.add('loading-div');
+        
         card.appendChild(name);
         card.appendChild(number);
         card.appendChild(image);
+        card.appendChild(loadingDiv);
 
         cardsContainer.appendChild(card);
 
@@ -128,6 +133,10 @@ function createCards(response){
             .then(response => response.json())
             .then(response => {
                 image.src= `${response.sprites.front_default}`;
+            })
+            .then( () => {
+                image.classList.remove('loading');
+                loadingDiv.remove();
             })
             .catch(error => console.log(error));
     })
