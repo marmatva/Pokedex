@@ -187,7 +187,17 @@ function showPokemonDetails(response){
 }
 
 overlayButton.onclick=()=>{
-    overlay.classList.add('translated');
+    overlay.classList.add('translated');   
+    verifyCurrentPage();
+}
+
+function verifyCurrentPage(){
+    let id = parseInt(overlay.firstElementChild.id.replace("details-pokemon-",""));
+    let correctPage = Math.floor(id/cardsPerPage);
+    if(correctPage!==page){
+        page=correctPage;
+        updatePage();
+    } 
 }
 
 function createPhysicalChar(height, weight){
