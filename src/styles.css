@@ -382,6 +382,10 @@ header img{
     justify-content:space-evenly;
 }
 
+.types-div{
+    margin-top: 1rem;
+}
+
 .types-div div{
     display: flex;
     justify-content: space-between;    
@@ -435,7 +439,7 @@ footer{
 
 .type-details h2{
     margin: 0;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
 }
 
 .type-details h3{
@@ -466,7 +470,6 @@ footer{
 }
 
 .related-types-container p{
-    /* flex: 1 1 40%; */
     flex-grow: 0;
     width: 8.5rem;
     display: inline-block;

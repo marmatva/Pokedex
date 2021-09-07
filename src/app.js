@@ -400,46 +400,22 @@ function showTypeDetails(response){
 
     let typeMainHeading = document.createElement('H2');
     typeMainHeading.appendChild(document.createTextNode(response.name));
-    
-    let attackHeading1 = document.createElement('H4');
-    attackHeading1.appendChild(document.createTextNode('Attack'));
-    let defenseHeading1 = document.createElement('H4');
-    defenseHeading1.appendChild(document.createTextNode('Defense'));
 
-    let strengthHeading = document.createElement('H3');
-    strengthHeading.appendChild(document.createTextNode('Strengths'));
-    let strengthContainer = document.createElement('DIV');
-    strengthContainer.classList.add('relations-type-container');
+    let strengthHeading = document.createElement('H3'); 
+    strengthHeading.appendChild(document.createTextNode('Strengths')); 
 
     let strengthAttackArray = [...damageRelations.double_damage_to];
     let strengthDefenseArray = [...damageRelations.no_damage_from, ...damageRelations.half_damage_from];
-    let strengthAttackContainer = createDamageRelationContainer(strengthAttackArray);
-    let strengthDefenseContainer = createDamageRelationContainer(strengthDefenseArray);
-    
-    strengthContainer.appendChild(attackHeading1);
-    strengthContainer.appendChild(defenseHeading1);
-    strengthContainer.appendChild(strengthAttackContainer);
-    strengthContainer.appendChild(strengthDefenseContainer);
 
-    let attackHeading2 = document.createElement('H4');
-    attackHeading2.appendChild(document.createTextNode('Attack'));
-    let defenseHeading2 = document.createElement('H4');
-    defenseHeading2.appendChild(document.createTextNode('Defense'));
+    let strengthContainer = createStrengthDetailsContainer(strengthAttackArray, strengthDefenseArray);
 
     let weakHeading = document.createElement('H3');
     weakHeading.appendChild(document.createTextNode('Weaknesses'));
-    let weakContainer = document.createElement('DIV');
-    weakContainer.classList.add('relations-type-container');
 
     let weakAttackArray = [...damageRelations.half_damage_to, ...damageRelations.no_damage_to ];
     let weakDefenseArray = [...damageRelations.double_damage_from];
-    let weakAttackContainer = createDamageRelationContainer(weakAttackArray);
-    let weakDefenseContainer = createDamageRelationContainer(weakDefenseArray);
 
-    weakContainer.appendChild(attackHeading2);
-    weakContainer.appendChild(defenseHeading2);
-    weakContainer.appendChild(weakAttackContainer);
-    weakContainer.appendChild(weakDefenseContainer);
+    let weakContainer = createStrengthDetailsContainer(weakAttackArray, weakDefenseArray);    
 
     typeDetailsContainer.appendChild(closeButton);
     typeDetailsContainer.appendChild(typeMainHeading);
@@ -465,6 +441,28 @@ function createDamageRelationContainer(relationsArray){
     })
 
     return container;
+}
+
+function createStrengthDetailsContainer(firstArray, secondArray){
+    let attackHeading = document.createElement('H4');
+    attackHeading.appendChild(document.createTextNode('Attack'));
+    let defenseHeading = document.createElement('H4');
+    defenseHeading.appendChild(document.createTextNode('Defense'));
+
+    let strengthHeading = document.createElement('H3');
+    strengthHeading.appendChild(document.createTextNode('Strengths'));
+    let strengthContainer = document.createElement('DIV');
+    strengthContainer.classList.add('relations-type-container');
+
+    let attackContainer = createDamageRelationContainer(firstArray);
+    let defenseContainer = createDamageRelationContainer(secondArray);
+    
+    strengthContainer.appendChild(attackHeading);
+    strengthContainer.appendChild(defenseHeading);
+    strengthContainer.appendChild(attackContainer);
+    strengthContainer.appendChild(defenseContainer);
+
+    return strengthContainer;
 }
 
 function pullOutTypeDetails(){
