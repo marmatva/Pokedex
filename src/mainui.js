@@ -1,4 +1,4 @@
-import {getApiInfo, getImageSrc} from './pokeapi.js'
+import {requestPokemonsList, requestImageSource} from './storage.js'
 import {overlay} from './overlayui.js'
 
 export const pokemonQuantity = 898;
@@ -64,13 +64,13 @@ export async function updatePage(){
     }
 
     pageInput.value=page+1;
-    let url = `https://pokeapi.co/api/v2/pokemon/?offset=${cardsPerPage*page}&limit=${cardsPerPage}`
-    let response = await getApiInfo(url);
+
+    let response = await requestPokemonsList(cardsPerPage*page, cardsPerPage);
     createCards(response);
 }
 
 function createCards(response){
-    response.forEach( (pokemon) => {
+    response.forEach( async (pokemon) => {
         let url = pokemon.url;
         let pokemonId = url.replace("https://pokeapi.co/api/v2/pokemon/", "").replace("/", "");
         
@@ -103,14 +103,17 @@ function createCards(response){
 
         cardsContainer.appendChild(card);
 
-        getImageSrc(url)
-            .then(response => {
-                image.src= `${response}`;
-            })
-            .then( () => {
-                image.classList.remove('loading');
-                loadingDiv.remove();
-            })
+        image.src = await requestImageSource(pokemonId);
+        image.classList.remove('loading');
+        loadingDiv.remove();
+        // getImageSrc(url)
+        //     .then(response => {
+        //         image.src= `${response}`;
+        //     })
+        //     .then( () => {
+        //         image.classList.remove('loading');
+        //         loadingDiv.remove();
+        //     })
     })
 
     buttonsBlocked = false;

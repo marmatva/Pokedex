@@ -1,4 +1,5 @@
-import {getPokemonDetails, fetchTypeDetails} from './pokeapi.js'
+import {requestPokemonDetails, requestTypeDetails} from './storage.js'
+
 import {pokemonQuantity} from './mainui.js'
 
 export const overlay = document.querySelector('.overlay');
@@ -151,15 +152,13 @@ export async function getSiblingDetails(e){
     } else{
         id--;
     }
-
-    let url = `https://pokeapi.co/api/v2/pokemon/${id}/`
     
     let typeDetails=document.querySelector('.type-details')
     if(typeDetails){
         pullOutTypeDetails();
     }
 
-    let response = await getPokemonDetails(url);
+    let response = await requestPokemonDetails(id);
     showPokemonDetails(response);
     
 }
@@ -172,7 +171,7 @@ async function getTypeDetails(e){
     }
 
     let id = target.id;
-    let response = await fetchTypeDetails(id);
+    let response = await requestTypeDetails(id);
     showTypeDetails(response);
 }
 
