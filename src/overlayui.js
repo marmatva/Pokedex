@@ -3,7 +3,7 @@ import {requestPokemonDetails, requestTypeDetails} from './storage.js'
 import {pokemonQuantity} from './mainui.js'
 
 export const overlay = document.querySelector('.overlay');
-const pokemonDetailsContainer = document.querySelector('.pokemon-details');
+const pokemonDetailsContainer = document.querySelector('.pokemon-details'); //ESTA!
 
 export const previousPokemonButton = document.querySelector('#previous-pokemon'); 
 export const nextPokemonButton = document.querySelector('#next-pokemon'); 
