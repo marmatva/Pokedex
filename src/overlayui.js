@@ -2,15 +2,20 @@ import {requestPokemonDetails, requestTypeDetails} from './storage.js'
 
 import {pokemonQuantity} from './mainui.js'
 
-export const overlay = document.querySelector('.overlay');
-const pokemonDetailsContainer = document.querySelector('.pokemon-details'); //ESTA!
-
-export const previousPokemonButton = document.querySelector('#previous-pokemon'); 
-export const nextPokemonButton = document.querySelector('#next-pokemon'); 
+//export const overlay = document.querySelector('.overlay');
+export function getOverlay(){
+    return document.querySelector('.overlay');
+}
+// const pokemonDetailsContainer = document.querySelector('.pokemon-details'); //ESTA!
+function getPokemonDetailsContainer(){
+    return document.querySelector('.pokemon-details');
+}
+//export const previousPokemonButton = document.querySelector('#previous-pokemon'); 
+//export const nextPokemonButton = document.querySelector('#next-pokemon'); 
 
 function removePreviousDetails(){
-    if(pokemonDetailsContainer.children.length>1){
-        let childs = [...pokemonDetailsContainer.children];
+    if(getPokemonDetailsContainer().children.length>1){
+        let childs = [...getPokemonDetailsContainer().children];
         childs.forEach(child => {
             if(child.tagName!=="BUTTON"){
                 child.remove();
@@ -19,10 +24,12 @@ function removePreviousDetails(){
     }
 }
 
-export function showPokemonDetails(response){
+export function showPokemonDetails(response, eventHandler){
     
     removePreviousDetails();
     
+    const overlay = getOverlay();
+
     let id = response.id;
     let idString = id.toString();
     
@@ -39,7 +46,7 @@ export function showPokemonDetails(response){
 
     let abilitiesEl = createAbilities(response.abilities)   
     let physicalChar = createPhysicalChar(response.height, response.weight);
-    let typesEl = createTypes(response.types);
+    let typesEl = createTypes(response.types, eventHandler);
 
     overlay.firstElementChild.id=`details-pokemon-${id}`;
     overlay.firstElementChild.appendChild(imageEl);
@@ -102,7 +109,7 @@ function createPhysicalChar(height, weight){
     return physicalChar;
 }
 
-function createTypes(typesResponseArray){
+function createTypes(typesResponseArray, eventHandler){
     let typesEl = document.createElement('DIV');
     typesEl.classList.add('detail-info-div'); 
     typesEl.classList.add('types-div');
@@ -115,10 +122,10 @@ function createTypes(typesResponseArray){
         let id = typeObject.type.url.replace("https://pokeapi.co/api/v2/","");
         let button = document.createElement('BUTTON');
         button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle-fill" viewBox="0 0 16 16">
-        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247zm2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z"/>
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247zm2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z"></path>
         </svg>`
         button.id = id;
-        button.addEventListener('click', getTypeDetails);
+        button.addEventListener('click', eventHandler);
         typeContainer.appendChild(typeEl);
         typeContainer.appendChild(button);
         typeContainer.classList.add(`type-${typeObject.type.name}`);
@@ -131,9 +138,9 @@ function createTypes(typesResponseArray){
 
 function checkSiblingButtonsVisibility(id){
     if(id===1){
-        previousPokemonButton.classList.add('not-visible');
+        document.querySelector('#previous-pokemon').classList.add('not-visible');
     } else if(id===pokemonQuantity){
-        nextPokemonButton.classList.add('not-visible');
+        document.querySelector('#next-pokemon').classList.add('not-visible');
     } else{
         let notVisible = document.querySelectorAll('.pokemon-button.not-visible');
         if(notVisible.length>0){
@@ -145,7 +152,7 @@ function checkSiblingButtonsVisibility(id){
 }
 
 export async function getSiblingDetails(e){
-    let id = pokemonDetailsContainer.id.replace("details-pokemon-", "");
+    let id = getPokemonDetailsContainer().id.replace("details-pokemon-", "");
 
     if(e.target.classList.contains('next-pokemon') ){
         id++;
@@ -159,11 +166,11 @@ export async function getSiblingDetails(e){
     }
 
     let response = await requestPokemonDetails(id);
-    showPokemonDetails(response);
+    showPokemonDetails(response, getTypeDetails);
     
 }
 
-async function getTypeDetails(e){
+export async function getTypeDetails(e){
     let target = e.target;
 
     while(target.tagName !== 'BUTTON'){
@@ -175,7 +182,7 @@ async function getTypeDetails(e){
     showTypeDetails(response);
 }
 
-function showTypeDetails(response){
+export function showTypeDetails(response){
     let damageRelations = response.damage_relations;
 
     let typeDetailsContainer = document.createElement('DIV');
@@ -212,7 +219,7 @@ function showTypeDetails(response){
     typeDetailsContainer.appendChild(weakHeading);
     typeDetailsContainer.appendChild(weakContainer);
 
-    pokemonDetailsContainer.appendChild(typeDetailsContainer);
+    getPokemonDetailsContainer().appendChild(typeDetailsContainer);
 
 }
 
@@ -237,8 +244,8 @@ function createStrengthDetailsContainer(firstArray, secondArray){
     let defenseHeading = document.createElement('H4');
     defenseHeading.appendChild(document.createTextNode('Defense'));
 
-    let strengthHeading = document.createElement('H3');
-    strengthHeading.appendChild(document.createTextNode('Strengths'));
+    //let strengthHeading = document.createElement('H3');
+    //strengthHeading.appendChild(document.createTextNode('Strengths'));
     let strengthContainer = document.createElement('DIV');
     strengthContainer.classList.add('relations-type-container');
 

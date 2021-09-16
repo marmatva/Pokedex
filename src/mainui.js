@@ -1,16 +1,22 @@
 import {requestPokemonsList, requestImageSource} from './storage.js'
-import {overlay} from './overlayui.js'
+import {getOverlay} from './overlayui.js'
 
 export const pokemonQuantity = 898;
 
-export const previousButton = document.querySelector('#previous-page');
-export const nextButton = document.querySelector('#next-page');
+//export const previousButton = document.querySelector('#previous-page');
+//export const nextButton = document.querySelector('#next-page');
 
 export const cardsContainer = document.querySelector('.cards-container');
+export function getCardsContainer(){
+    return document.querySelector('.cards-container');
+}
 
 let page = 0;
 
 export const pageInput = document.querySelector('#requiredPage');
+function getPageInput(){
+    return document.querySelector('#requiredPage');
+}
 
 let rows;
 let columns;
@@ -21,21 +27,24 @@ let buttonsBlocked = true;
 
 
 export function getCardsPerPage(){
-    rows = getComputedStyle(cardsContainer).getPropertyValue("grid-template-rows").split(" ").length;
-    columns = getComputedStyle(cardsContainer).getPropertyValue("grid-template-columns").split(" ").length;
+    rows = getComputedStyle(getCardsContainer()).getPropertyValue("grid-template-rows").split(" ").length;
+    columns = getComputedStyle(getCardsContainer()).getPropertyValue("grid-template-columns").split(" ").length;
     cardsPerPage = rows*columns; 
 
     availablePages = Math.ceil(pokemonQuantity/cardsPerPage);
 }
 
 export function updateAvailablePages(){
-    pageInput.max=availablePages;
+    getPageInput().max=availablePages;
 
     let pagerIndicator = document.querySelector('#totalPages');
     pagerIndicator.textContent = availablePages;
 }
 
 function updatePagerButtonsVisibility(){
+    const previousButton = document.querySelector('#previous-page');
+    const nextButton = document.querySelector('#next-page');
+
     if(page===0){
         previousButton.classList.add('not-visible');
     } else if(previousButton.classList.contains('not-visible')){
@@ -51,7 +60,7 @@ function updatePagerButtonsVisibility(){
 
 export async function updatePage(){
     buttonsBlocked = true;
-    pageInput.disabled = true;
+    getPageInput().disabled = true;
     
     updatePagerButtonsVisibility();
 
@@ -63,7 +72,7 @@ export async function updatePage(){
         })
     }
 
-    pageInput.value=page+1;
+    getPageInput().value=page+1;
 
     let response = await requestPokemonsList(cardsPerPage*page, cardsPerPage);
     createCards(response);
@@ -101,7 +110,7 @@ function createCards(response){
         card.appendChild(image);
         card.appendChild(loadingDiv);
 
-        cardsContainer.appendChild(card);
+        getCardsContainer().appendChild(card);
 
         image.src = await requestImageSource(pokemonId);
         image.classList.remove('loading');
@@ -117,7 +126,7 @@ function createCards(response){
     })
 
     buttonsBlocked = false;
-    pageInput.disabled = false;
+    getPageInput().disabled = false;
 }
 
 export function movePageForward(){
@@ -138,11 +147,11 @@ export function movePageBackwards(){
 
 export function managePageInput(e){
     if(e.target.value<1) {
-        pageInput.value=page+1;
+        getPageInput().value=page+1;
         showWarning('La pagina debe ser igual o meyor a 1');
         return;
     } else if (e.target.value>availablePages){
-        pageInput.value=page+1;
+        getPageInput().value=page+1;
         showWarning(`La pagina debe ser menor o igual a ${availablePages}`);
         return;
     }
@@ -153,7 +162,7 @@ export function managePageInput(e){
 }
 
 export function verifyCurrentPage(){
-    let id = parseInt(overlay.firstElementChild.id.replace("details-pokemon-",""));
+    let id = parseInt(getOverlay().firstElementChild.id.replace("details-pokemon-",""));
     let correctPage = Math.floor(id/cardsPerPage);
     if(correctPage!==page){
         page=correctPage;
@@ -179,7 +188,7 @@ function showWarning(message){
 
 export function redistributeGrid(){
     let body = document.querySelector('body');
-    let newColumns = getComputedStyle(cardsContainer).getPropertyValue("grid-template-columns").split(" ").length;
+    let newColumns = getComputedStyle(getCardsContainer()).getPropertyValue("grid-template-columns").split(" ").length;
     if(newColumns<columns && body.classList.contains('vh-100')){
         body.classList.remove('vh-100');
     } else if(newColumns>=columns && !(body.classList.contains('vh-100'))){
