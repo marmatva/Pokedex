@@ -1,20 +1,15 @@
-import {requestPokemonsList, requestImageSource} from './storage.js'
-import {getOverlay} from './overlayui.js'
+import {requestImageSource} from './storage.js'
+import {blockPageChange} from './pokedex.js'
 
 export const pokemonQuantity = 898;
 
-//export const previousButton = document.querySelector('#previous-page');
-//export const nextButton = document.querySelector('#next-page');
-
-export const cardsContainer = document.querySelector('.cards-container');
 export function getCardsContainer(){
     return document.querySelector('.cards-container');
 }
 
 let page = 0;
 
-export const pageInput = document.querySelector('#requiredPage');
-function getPageInput(){
+export function getPageInput(){
     return document.querySelector('#requiredPage');
 }
 
@@ -23,8 +18,9 @@ let columns;
 let cardsPerPage;
 let availablePages;
 
-let buttonsBlocked = true;
-
+export function getPageInfo(){
+    return {availablePages, cardsPerPage, page};
+}
 
 export function getCardsPerPage(){
     rows = getComputedStyle(getCardsContainer()).getPropertyValue("grid-template-rows").split(" ").length;
@@ -39,6 +35,13 @@ export function updateAvailablePages(){
 
     let pagerIndicator = document.querySelector('#totalPages');
     pagerIndicator.textContent = availablePages;
+}
+
+export function preparePageForUpdate(){
+    blockPageChange();  
+    updatePagerButtonsVisibility();
+    removeCards();
+    updatePageInputValue();
 }
 
 function updatePagerButtonsVisibility(){
@@ -58,12 +61,7 @@ function updatePagerButtonsVisibility(){
     }
 }
 
-export async function updatePage(){
-    buttonsBlocked = true;
-    getPageInput().disabled = true;
-    
-    updatePagerButtonsVisibility();
-
+function removeCards(){
     let cards = document.querySelectorAll('.card');
 
     if(cards.length>0){
@@ -71,14 +69,9 @@ export async function updatePage(){
             card.remove();
         })
     }
-
-    getPageInput().value=page+1;
-
-    let response = await requestPokemonsList(cardsPerPage*page, cardsPerPage);
-    createCards(response);
 }
 
-function createCards(response){
+export function createCards(response){
     response.forEach( async (pokemon) => {
         let url = pokemon.url;
         let pokemonId = url.replace("https://pokeapi.co/api/v2/pokemon/", "").replace("/", "");
@@ -115,62 +108,25 @@ function createCards(response){
         image.src = await requestImageSource(pokemonId);
         image.classList.remove('loading');
         loadingDiv.remove();
-        // getImageSrc(url)
-        //     .then(response => {
-        //         image.src= `${response}`;
-        //     })
-        //     .then( () => {
-        //         image.classList.remove('loading');
-        //         loadingDiv.remove();
-        //     })
     })
 
-    buttonsBlocked = false;
-    getPageInput().disabled = false;
+    blockPageChange(false);
 }
 
-export function movePageForward(){
-    if(buttonsBlocked){
-        return;
+export function updatePageNumber(addition, actualNumber = undefined){
+    if(actualNumber){
+        page=actualNumber;
+        return
     }
-    page++;
-    updatePage();
+    page = page + addition;
 }
 
-export function movePageBackwards(){
-    if(buttonsBlocked){
-        return;
-    }
-    page--;
-    updatePage();
+export function updatePageInputValue(n= page+1){
+    getPageInput().value = n;
 }
 
-export function managePageInput(e){
-    if(e.target.value<1) {
-        getPageInput().value=page+1;
-        showWarning('La pagina debe ser igual o meyor a 1');
-        return;
-    } else if (e.target.value>availablePages){
-        getPageInput().value=page+1;
-        showWarning(`La pagina debe ser menor o igual a ${availablePages}`);
-        return;
-    }
 
-    page = e.target.value - 1;
-
-    updatePage();
-}
-
-export function verifyCurrentPage(){
-    let id = parseInt(getOverlay().firstElementChild.id.replace("details-pokemon-",""));
-    let correctPage = Math.floor(id/cardsPerPage);
-    if(correctPage!==page){
-        page=correctPage;
-        updatePage();
-    } 
-}
-
-function showWarning(message){
+export function showWarning(message){
     let warningContainer = document.createElement('DIV');
     warningContainer.classList.add('warning-container');
     let warningP = document.createElement('P');

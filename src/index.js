@@ -1,23 +1,23 @@
 import {requestPokemonDetails} from './storage.js'
-import {getSiblingDetails, getOverlay, showPokemonDetails, getTypeDetails} from './overlayui.js'
-import {getCardsPerPage, updateAvailablePages, updatePage, movePageForward, movePageBackwards, managePageInput , verifyCurrentPage, redistributeGrid, getCardsContainer , pageInput} from './mainui.js'
-
+import {getOverlay, showPokemonDetails} from './overlayui.js'
+import {getCardsPerPage, updateAvailablePages, redistributeGrid, getCardsContainer , getPageInput} from './mainui.js'
+import {updatePage, movePage, managePageInput, verifyCurrentPage, getSiblingDetails} from './pokedex.js'
 
 window.onresize = redistributeGrid;
 
-document.querySelector('#next-page').onclick=movePageForward;
-document.querySelector('#previous-page').onclick=movePageBackwards;
+document.querySelector('#next-page').onclick=()=>{movePage(1)};
+document.querySelector('#previous-page').onclick=()=>{movePage(-1)};
 
 getCardsContainer().onclick= async (e)=>{
     if(!(e.target.tagName === 'SECTION')){
         let target = (e.target.tagName === 'ARTICLE') ? e.target : e.target.parentElement;
         let id = target.id.replace('pokemon-', '');
         let response = await requestPokemonDetails(id);
-        showPokemonDetails(response, getTypeDetails);
+        showPokemonDetails(response);
     }
 }
 
-pageInput.onchange=managePageInput;
+getPageInput().onchange=managePageInput;
 
 document.querySelector('#previous-pokemon').onclick=getSiblingDetails;
 document.querySelector('#next-pokemon').onclick=getSiblingDetails;
