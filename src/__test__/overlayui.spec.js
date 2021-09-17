@@ -1,4 +1,9 @@
 /// <reference types="Jest"/>
+
+jest.mock('../pokedex.js', ()=> ({
+    getTypeDetails: jest.fn(),
+})
+);
 import fixture from './pokedex.fixture.js'
 
 document.body.innerHTML = fixture;
@@ -6,12 +11,12 @@ document.body.innerHTML = fixture;
 import { showPokemonDetails, getOverlay, showTypeDetails } from '../overlayui.js'
 import pokemonsResponse from '../../cypress/fixtures/pokemon-1.json'
 import typeResponse from '../../cypress/fixtures/type-12.json'
+import * as mockPokedex from '../pokedex.js';
 
 test('test the display of pokemon details (showPokemonDetails)', ()=>{
+
     
-    let mockedFunction = jest.fn();
-    
-    showPokemonDetails(pokemonsResponse, mockedFunction);
+    showPokemonDetails(pokemonsResponse);
     
     let container = getOverlay().firstElementChild;
     expect(container.id).toEqual('details-pokemon-1');
@@ -61,19 +66,18 @@ test('test the display of pokemon details (showPokemonDetails)', ()=>{
     
         container.querySelector('button').click();
 
-        expect(mockedFunction).toHaveBeenCalledTimes(i+1);
+        expect(mockPokedex.getTypeDetails).toHaveBeenCalledTimes(i+1);
     })
 })
 
 test('Test the removal of previous details', ()=>{
-    let mockedFunction = jest.fn();
 
     let container = getOverlay().firstElementChild;
 
     let detailsDivs = container.querySelectorAll('.pokemon-details-div');
     expect(detailsDivs).toHaveLength(3);
 
-    showPokemonDetails(pokemonsResponse, mockedFunction);
+    showPokemonDetails(pokemonsResponse);
 
     detailsDivs = container.querySelectorAll('.pokemon-details-div');
     expect(detailsDivs).not.toHaveLength(6);
@@ -132,6 +136,6 @@ test('Correct type details pull out', ()=>{
     closeButton.click();
 
     setTimeout(()=>{
-        expect(typeDetails).toEqual(null)
+        expect(typeDetails).toBeNull;
     }, 500);
 })

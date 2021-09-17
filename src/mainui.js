@@ -106,15 +106,17 @@ export function createCards(response){
         getCardsContainer().appendChild(card);
 
         image.src = await requestImageSource(pokemonId);
-        image.classList.remove('loading');
-        loadingDiv.remove();
+        if(image.src){
+            image.classList.remove('loading');
+            loadingDiv.remove();
+        }
     })
 
     blockPageChange(false);
 }
 
 export function updatePageNumber(addition, actualNumber = undefined){
-    if(actualNumber){
+    if(actualNumber || actualNumber===0){
         page=actualNumber;
         return
     }
