@@ -2,21 +2,24 @@
 
 jest.mock('../pokedex.js', ()=> ({
     getTypeDetails: jest.fn(),
+    verifyCurrentPage: jest.fn(),
 })
 );
 import fixture from './pokedex.fixture.js'
 
 document.body.innerHTML = fixture;
 
-import { showPokemonDetails, getOverlay, showTypeDetails } from '../overlayui.js'
-import pokemonsResponse from '../../cypress/fixtures/pokemon-1.json'
+import { showPokemonDetails, getOverlay, showTypeDetails, closeOverlay } from '../overlayui.js'
+import firstPokemonResponse from '../../cypress/fixtures/pokemon-1.json'
+import penultimatePokemonResponse from '../../cypress/fixtures/pokemon-897.json'
+import lastPokemonResponse from '../../cypress/fixtures/pokemon-898.json'
 import typeResponse from '../../cypress/fixtures/type-12.json'
 import * as mockPokedex from '../pokedex.js';
 
 test('test the display of pokemon details (showPokemonDetails)', ()=>{
 
     
-    showPokemonDetails(pokemonsResponse);
+    showPokemonDetails(firstPokemonResponse);
     
     let container = getOverlay().firstElementChild;
     expect(container.id).toEqual('details-pokemon-1');
@@ -68,6 +71,9 @@ test('test the display of pokemon details (showPokemonDetails)', ()=>{
 
         expect(mockPokedex.getTypeDetails).toHaveBeenCalledTimes(i+1);
     })
+
+    expect(document.querySelector('#previous-pokemon').className).toContain('not-visible');
+    expect(document.querySelector('#next-pokemon').className).not.toContain('not-visible');
 })
 
 test('Test the removal of previous details', ()=>{
@@ -77,7 +83,7 @@ test('Test the removal of previous details', ()=>{
     let detailsDivs = container.querySelectorAll('.pokemon-details-div');
     expect(detailsDivs).toHaveLength(3);
 
-    showPokemonDetails(pokemonsResponse);
+    showPokemonDetails(firstPokemonResponse);
 
     detailsDivs = container.querySelectorAll('.pokemon-details-div');
     expect(detailsDivs).not.toHaveLength(6);
@@ -138,4 +144,24 @@ test('Correct type details pull out', ()=>{
     setTimeout(()=>{
         expect(typeDetails).toBeNull;
     }, 500);
+})
+
+test('sibling buttons vissibility', ()=>{
+    let previousPokemon = document.querySelector('#previous-pokemon');
+    let nextPokemon = document.querySelector('#next-pokemon');
+
+    showPokemonDetails(lastPokemonResponse);
+    expect(previousPokemon.className).not.toContain('not-visible');
+    expect(nextPokemon.className).toContain('not-visible');
+
+    showPokemonDetails(penultimatePokemonResponse);
+    expect(previousPokemon.className).not.toContain('not-visible');
+    expect(nextPokemon.className).not.toContain('not-visible');
+
+});
+
+test('test overlay closing', ()=>{
+    closeOverlay();
+    expect(getOverlay().className).toContain('translated');
+    expect(mockPokedex.verifyCurrentPage).toHaveBeenCalledTimes(1);
 })

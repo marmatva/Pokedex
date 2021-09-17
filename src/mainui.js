@@ -1,4 +1,4 @@
-import {requestImageSource} from './storage.js'
+import {requestImageSource} from './service.js'
 import {blockPageChange} from './pokedex.js'
 
 export const pokemonQuantity = 898;

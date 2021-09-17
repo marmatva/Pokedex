@@ -1,5 +1,5 @@
 import {pokemonQuantity} from './mainui.js'
-import {getTypeDetails} from './pokedex.js'
+import {getTypeDetails, verifyCurrentPage} from './pokedex.js'
 
 
 export function getOverlay(){
@@ -232,3 +232,8 @@ export function pullOutTypeDetails(){
         typeDetails.remove();
     }, 500);
 }
+
+export function closeOverlay(){
+    getOverlay().classList.add('translated');   
+    verifyCurrentPage();
+}    

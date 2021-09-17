@@ -1,41 +1,33 @@
-import {requestPokemonDetails} from './storage.js'
-import {getOverlay, showPokemonDetails} from './overlayui.js'
+
+import {closeOverlay} from './overlayui.js'
 import {getCardsPerPage, updateAvailablePages, redistributeGrid, getCardsContainer , getPageInput} from './mainui.js'
-import {updatePage, movePage, managePageInput, verifyCurrentPage, getSiblingDetails} from './pokedex.js'
+import {updatePage, movePage, managePageInput, getSiblingDetails, getPokemonDetails} from './pokedex.js'
 
-window.onresize = redistributeGrid;
+function asignEventHandlers(){
+    window.onresize = redistributeGrid;
 
-document.querySelector('#next-page').onclick=()=>{movePage(1)};
-document.querySelector('#previous-page').onclick=()=>{movePage(-1)};
+    document.querySelector('#next-page').onclick=()=>{movePage(1)};
+    document.querySelector('#previous-page').onclick=()=>{movePage(-1)};
 
-getCardsContainer().onclick= async (e)=>{
-    if(!(e.target.tagName === 'SECTION')){
-        let target = (e.target.tagName === 'ARTICLE') ? e.target : e.target.parentElement;
-        let id = target.id.replace('pokemon-', '');
-        let response = await requestPokemonDetails(id);
-        showPokemonDetails(response);
-    }
+    getPageInput().onchange=managePageInput;
+    
+    getCardsContainer().onclick=getPokemonDetails;
+
+    document.querySelector('#previous-pokemon').onclick=getSiblingDetails;
+    document.querySelector('#next-pokemon').onclick=getSiblingDetails;
+
+    document.querySelector('.overlay button').onclick=closeOverlay;
 }
-
-getPageInput().onchange=managePageInput;
-
-document.querySelector('#previous-pokemon').onclick=getSiblingDetails;
-document.querySelector('#next-pokemon').onclick=getSiblingDetails;
-
-document.querySelector('.overlay button').onclick=()=>{
-    getOverlay().classList.add('translated');   
-    verifyCurrentPage();
-}
-
-document.addEventListener('DOMContentLoaded', ()=>{startApp()});
 
 
 function startApp(){
+    asignEventHandlers();
     getCardsPerPage();
     updateAvailablePages();
     updatePage();
 }
 
+document.addEventListener('DOMContentLoaded', ()=>{startApp()});
 
 
 

@@ -1,5 +1,5 @@
 import {preparePageForUpdate, createCards, getPageInput, updatePageNumber, getPageInfo, updatePageInputValue, showWarning} from './mainui.js'
-import {requestPokemonsList, requestPokemonDetails, requestTypeDetails} from './storage.js'
+import {requestPokemonsList, requestPokemonDetails, requestTypeDetails} from './service.js'
 import {getOverlay, getPokemonDetailsContainer, pullOutTypeDetails, showPokemonDetails, showTypeDetails} from './overlayui.js'
 
 export async function updatePage(){
@@ -44,6 +44,15 @@ function validPageInputValue(inputValue){
         return false;
     }
     return true;
+}
+
+export async function getPokemonDetails(e){
+    if(!(e.target.tagName === 'SECTION')){
+        let target = (e.target.tagName === 'ARTICLE') ? e.target : e.target.parentElement;
+        let id = target.id.replace('pokemon-', '');
+        let response = await requestPokemonDetails(id);
+        showPokemonDetails(response);
+    }
 }
 
 export function verifyCurrentPage(){

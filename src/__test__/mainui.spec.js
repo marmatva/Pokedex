@@ -3,14 +3,14 @@ jest.mock('../pokedex.js', ()=> ({
     blockPageChange: jest.fn(),
 })
 );
-jest.mock('../storage.js', ()=> ({
+jest.mock('../service.js', ()=> ({
     requestImageSource: jest.fn(),
 })
 );
 
 import * as main from '../mainui.js'
 import * as mockPokedex from '../pokedex.js'
-import * as mockStorage from '../storage.js'
+import * as mockStorage from '../service.js'
 import fixture from './pokedex.fixture.js'
 import pokemonsResponse from '../../cypress/fixtures/firstPokemonsList.json'
 import lastPokemonsResponse from '../../cypress/fixtures/lastPokemonsList.json'
