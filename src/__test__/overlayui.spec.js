@@ -141,9 +141,8 @@ test('Correct type details pull out', ()=>{
 
     closeButton.click();
 
-    setTimeout(()=>{
-        expect(typeDetails).toBeNull;
-    }, 500);
+    expect(typeDetails).toBeNull;
+    
 })
 
 test('sibling buttons vissibility', ()=>{

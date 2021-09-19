@@ -86,7 +86,7 @@ export async function getSiblingDetails(e){
         id--;
     }
     
-    let typeDetails=document.querySelector('.type-details')
+    let typeDetails=document.querySelector('.type-details');
     if(typeDetails){
         pullOutTypeDetails();
     }
