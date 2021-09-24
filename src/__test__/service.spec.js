@@ -4,14 +4,17 @@ jest.mock('../storage.js', ()=>({
 }))
 
 jest.mock('../pokeapi.js', ()=>({
-    fetchTypeDetails: jest.fn(()=>"test"),
-    getApiInfo: jest.fn(()=>"test"),
-    getPokemonDetails: jest.fn(()=>"test")
+    fetchTypeDetails: jest.fn(()=>"api test"),
+    getApiInfo: jest.fn(()=>"api test"),
+    getPokemonDetails: jest.fn(()=>"api test")
 }))
+
+jest.mock('../entities.js')
 
 import * as mockStorage from "../storage.js"
 import * as mockPokeapi from "../pokeapi.js";
 import * as service from '../service.js'
+import { Pokemon, PokemonList, TypeRelationsDetails } from "../entities.js";
 
 describe('Testing the service module', ()=>{
     beforeEach(jest.clearAllMocks);
@@ -20,15 +23,19 @@ describe('Testing the service module', ()=>{
             .mockImplementationOnce(()=>null)
             .mockImplementationOnce((x)=> `{"result": "${x}"}`);
         
+        Pokemon.mockImplementation(()=>({result: "test"}))
+        
         let firstCase = await service.requestPokemonDetails(1);
         expect(mockStorage.getFromLocalStorage).toHaveBeenCalledTimes(1);
         expect(mockStorage.getFromLocalStorage).toHaveBeenLastCalledWith(`pokemon-1`);
         expect(mockStorage.getFromLocalStorage).toHaveReturnedWith(null)
         expect(mockPokeapi.getPokemonDetails).toHaveBeenCalledTimes(1);
         expect(mockPokeapi.getPokemonDetails).toHaveBeenLastCalledWith(1);
+        expect(Pokemon).toHaveBeenCalledTimes(1);
+        expect(Pokemon).toHaveBeenLastCalledWith("api test");
         expect(mockStorage.saveInLocalStorage).toHaveBeenCalledTimes(1);
-        expect(mockStorage.saveInLocalStorage).toHaveBeenLastCalledWith(`pokemon-1`, "test");
-        expect(firstCase).toEqual("test");
+        expect(mockStorage.saveInLocalStorage).toHaveBeenLastCalledWith(`pokemon-1`, {result: "test"});
+        expect(firstCase).toEqual({result: "test"});
         
         let secondCase = await service.requestPokemonDetails(2);
         expect(mockStorage.getFromLocalStorage).toHaveBeenCalledTimes(2);
@@ -44,13 +51,18 @@ describe('Testing the service module', ()=>{
             .mockImplementationOnce(()=> null)
             .mockImplementationOnce((x)=> `{"result": "${x}"}`);
         
+
+        PokemonList.mockImplementation(()=>({result: "test"}))
+
         let firstCase = await service.requestPokemonsList(1, 2)
         expect(mockStorage.getFromLocalStorage).toHaveBeenCalledTimes(1);
         expect(mockStorage.getFromLocalStorage).toHaveBeenLastCalledWith(`pokemons-list-offset-1-limit-2`);
         expect(mockPokeapi.getApiInfo).toHaveBeenCalledTimes(1);
+        expect(PokemonList).toHaveBeenCalledTimes(1);
+        expect(PokemonList).toHaveBeenLastCalledWith("api test");
         expect(mockStorage.saveInLocalStorage).toHaveBeenCalledTimes(1);
-        expect(mockStorage.saveInLocalStorage).toHaveBeenLastCalledWith(`pokemons-list-offset-1-limit-2`,"test");
-        expect(firstCase).toEqual("test");
+        expect(mockStorage.saveInLocalStorage).toHaveBeenLastCalledWith(`pokemons-list-offset-1-limit-2`,{result: "test"});
+        expect(firstCase).toEqual({result: "test"});
         
         let secondCase = await service.requestPokemonsList(3, 4);
         expect(mockStorage.getFromLocalStorage).toHaveBeenCalledTimes(2);
@@ -65,15 +77,19 @@ describe('Testing the service module', ()=>{
             .mockImplementationOnce(()=>null)
             .mockImplementationOnce((x)=> `{"result": "${x}"}`);
     
-            
+        
+        TypeRelationsDetails.mockImplementation(()=>({result: "test"}));
+
         let firstCase = await service.requestTypeDetails('type-12');
         expect(mockStorage.getFromLocalStorage).toHaveBeenCalledTimes(1);
         expect(mockStorage.getFromLocalStorage).toHaveBeenLastCalledWith('type-type-12');
         expect(mockPokeapi.fetchTypeDetails).toHaveBeenCalledTimes(1);
         expect(mockPokeapi.fetchTypeDetails).toHaveBeenLastCalledWith('type-12');
+        expect(TypeRelationsDetails).toHaveBeenCalledTimes(1);
+        expect(TypeRelationsDetails).toHaveBeenLastCalledWith("api test");
         expect(mockStorage.saveInLocalStorage).toHaveBeenCalledTimes(1);
-        expect(mockStorage.saveInLocalStorage).toHaveBeenLastCalledWith('type-type-12',"test");
-        expect(firstCase).toEqual("test");
+        expect(mockStorage.saveInLocalStorage).toHaveBeenLastCalledWith('type-type-12',{result: "test"});
+        expect(firstCase).toEqual({result: "test"});
 
         let secondCase = await service.requestTypeDetails('type-21');
         expect(mockStorage.getFromLocalStorage).toHaveBeenCalledTimes(2);

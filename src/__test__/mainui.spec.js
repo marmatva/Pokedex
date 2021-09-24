@@ -12,8 +12,8 @@ import * as main from '../mainui.js'
 import * as mockPokedex from '../pokedex.js'
 import * as mockStorage from '../service.js'
 import fixture from './pokedex.fixture.js'
-import pokemonsResponse from '../../cypress/fixtures/firstPokemonsList.json'
-import lastPokemonsResponse from '../../cypress/fixtures/lastPokemonsList.json'
+import firstPokemonList from './firstList.json'
+import lastPokemonList from './lastList.json'
 document.body.innerHTML=fixture;
 
 
@@ -65,7 +65,7 @@ test('Show Warning function', ()=>{
 })
 
 test('Test the creation of cards', ()=>{
-    main.createCards(pokemonsResponse.results);
+    main.createCards(firstPokemonList);
     expect(mockStorage.requestImageSource).toHaveBeenCalledTimes(12);
     let names = ["bulbasaur", "ivysaur", "venusaur", "charmander", "charmeleon", "charizard", "squirtle", "wartortle", "blastoise", "caterpie", "metapod", "butterfree"]
     let cards = document.querySelectorAll('.card');
@@ -81,7 +81,7 @@ test('Test the creation of cards', ()=>{
 
 test('Last page of pokemons', ()=>{
     main.preparePageForUpdate();
-    main.createCards(lastPokemonsResponse.results);
+    main.createCards(lastPokemonList);
     let cards = document.querySelectorAll('.card');
     expect(cards).toHaveLength(10);
 })

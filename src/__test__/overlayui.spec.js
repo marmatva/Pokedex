@@ -10,10 +10,10 @@ import fixture from './pokedex.fixture.js'
 document.body.innerHTML = fixture;
 
 import { showPokemonDetails, getOverlay, showTypeDetails, closeOverlay } from '../overlayui.js'
-import firstPokemonResponse from '../../cypress/fixtures/pokemon-1.json'
-import penultimatePokemonResponse from '../../cypress/fixtures/pokemon-897.json'
-import lastPokemonResponse from '../../cypress/fixtures/pokemon-898.json'
-import typeResponse from '../../cypress/fixtures/type-12.json'
+import firstPokemonResponse from './firstPokemon.json'
+import penultimatePokemonResponse from './penultimatePokemon.json'
+import lastPokemonResponse from './lastPokemon.json'
+import typeResponse from './type-12.json'
 import * as mockPokedex from '../pokedex.js';
 
 test('test the display of pokemon details (showPokemonDetails)', ()=>{
