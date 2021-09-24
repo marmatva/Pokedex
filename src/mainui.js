@@ -73,17 +73,15 @@ function removeCards(){
 
 export function createCards(response){
     response.forEach( async (pokemon) => {
-        let url = pokemon.url;
-        let pokemonId = url.replace("https://pokeapi.co/api/v2/pokemon/", "").replace("/", "");
-        
-        if(pokemonId>pokemonQuantity){
+        if(pokemon.id>pokemonQuantity){
             return;
         }
 
+        let pokemonId = pokemon.id;
+
         let card = document.createElement('ARTICLE');
         card.classList.add('card');
-        let id = `pokemon-${pokemonId}`;
-        card.id= id;
+        card.id= `pokemon-${pokemonId}`;
         
         let name = document.createElement('H2');
         name.appendChild(document.createTextNode(pokemon.name));

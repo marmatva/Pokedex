@@ -65,9 +65,9 @@ function createAbilities(abilitiesArray){
     abilitiesEl.appendChild(abilitiesHeading);
     let abilitiesElInfo = document.createElement('DIV');
     abilitiesElInfo.classList.add('detail-info-div');
-    abilitiesArray.forEach(abilityArray => {
+    abilitiesArray.forEach(ability => {
         let abilityEl = document.createElement('P');
-        abilityEl.appendChild(document.createTextNode(abilityArray.ability.name));
+        abilityEl.appendChild(document.createTextNode(ability));
         abilitiesElInfo.appendChild(abilityEl);
     })
 
@@ -106,26 +106,25 @@ function createPhysicalChar(height, weight){
     return physicalChar;
 }
 
-function createTypes(typesResponseArray){
+function createTypes(typesArray){
     let typesEl = document.createElement('DIV');
     typesEl.classList.add('detail-info-div'); 
     typesEl.classList.add('types-div');
     typesEl.classList.add('pokemon-details-div');
 
-    typesResponseArray.forEach(typeObject=>{
+    typesArray.forEach(typeObject=>{
         let typeContainer = document.createElement('DIV');
         let typeEl = document.createElement('P');
-        typeEl.appendChild(document.createTextNode(typeObject.type.name));
-        let id = typeObject.type.url.replace("https://pokeapi.co/api/v2/","");
+        typeEl.appendChild(document.createTextNode(typeObject.name));
         let button = document.createElement('BUTTON');
         button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle-fill" viewBox="0 0 16 16">
         <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247zm2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z"></path>
         </svg>`
-        button.id = id;
+        button.id = typeObject.id;
         button.addEventListener('click', getTypeDetails);
         typeContainer.appendChild(typeEl);
         typeContainer.appendChild(button);
-        typeContainer.classList.add(`type-${typeObject.type.name}`);
+        typeContainer.classList.add(`type-${typeObject.name}`);
 
         typesEl.appendChild(typeContainer);
     })
@@ -148,9 +147,7 @@ function checkSiblingButtonsVisibility(id){
     }
 }
 
-export function showTypeDetails(response){
-    let damageRelations = response.damage_relations;
-
+export function showTypeDetails(typeRelations){
     let typeDetailsContainer = document.createElement('DIV');
     typeDetailsContainer.classList.add('type-details');
 
@@ -160,23 +157,17 @@ export function showTypeDetails(response){
     closeButton.classList.add('close-button');
 
     let typeMainHeading = document.createElement('H2');
-    typeMainHeading.appendChild(document.createTextNode(response.name));
+    typeMainHeading.appendChild(document.createTextNode(typeRelations.typeName));
 
     let strengthHeading = document.createElement('H3'); 
     strengthHeading.appendChild(document.createTextNode('Strengths')); 
 
-    let strengthAttackArray = [...damageRelations.double_damage_to];
-    let strengthDefenseArray = [...damageRelations.no_damage_from, ...damageRelations.half_damage_from];
-
-    let strengthContainer = createStrengthDetailsContainer(strengthAttackArray, strengthDefenseArray);
+    let strengthContainer = createStrengthDetailsContainer(typeRelations.strengthAttack, typeRelations.strengthDefense);
 
     let weakHeading = document.createElement('H3');
     weakHeading.appendChild(document.createTextNode('Weaknesses'));
 
-    let weakAttackArray = [...damageRelations.half_damage_to, ...damageRelations.no_damage_to ];
-    let weakDefenseArray = [...damageRelations.double_damage_from];
-
-    let weakContainer = createStrengthDetailsContainer(weakAttackArray, weakDefenseArray);    
+    let weakContainer = createStrengthDetailsContainer(typeRelations.weakAttack, typeRelations.weakDefense);    
 
     typeDetailsContainer.appendChild(closeButton);
     typeDetailsContainer.appendChild(typeMainHeading);
@@ -193,10 +184,10 @@ function createDamageRelationContainer(relationsArray){
     let container = document.createElement('DIV');
     container.classList.add('related-types-container')
 
-    relationsArray.forEach( typeObject =>{
+    relationsArray.forEach( typeName =>{
         let typeEl = document.createElement('P');
-        typeEl.appendChild(document.createTextNode(typeObject.name));
-        typeEl.classList.add(`type-${typeObject.name}`);
+        typeEl.appendChild(document.createTextNode(typeName));
+        typeEl.classList.add(`type-${typeName}`);
 
         container.appendChild(typeEl);
     })

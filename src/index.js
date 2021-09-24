@@ -2,6 +2,7 @@
 import {closeOverlay} from './overlayui.js'
 import {getCardsPerPage, updateAvailablePages, redistributeGrid, getCardsContainer , getPageInput} from './mainui.js'
 import {updatePage, movePage, managePageInput, getSiblingDetails, getPokemonDetails} from './pokedex.js'
+import{PokemonList} from './entities.js'
 
 function asignEventHandlers(){
     window.onresize = redistributeGrid;
@@ -28,6 +29,5 @@ function startApp(){
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{startApp()});
-
 
 

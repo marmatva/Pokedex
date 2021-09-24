@@ -1,5 +1,6 @@
 import{ saveInLocalStorage, getFromLocalStorage} from "./storage.js"
 import { fetchTypeDetails, getApiInfo, getPokemonDetails } from "./pokeapi.js";
+import { Pokemon, PokemonList, TypeRelationsDetails } from "./entities.js";
 
 function createPokemonsListKey(offset, limit){
     return `pokemons-list-offset-${offset}-limit-${limit}`;
@@ -16,7 +17,6 @@ function createPokemonTypeKey(id){
 function createImageKey(id){
     return `pokemon-${id}-image`;
 }
-//Local storage for image sources
 
 
 export async function requestPokemonDetails(id){
@@ -29,8 +29,9 @@ export async function requestPokemonDetails(id){
         return JSON.parse(string);
     }catch(e){
         let response = await getPokemonDetails(id);
-        saveInLocalStorage(key, response);
-        return response; 
+        let pokemon = new Pokemon(response);
+        saveInLocalStorage(key, pokemon);
+        return pokemon; 
     }
 }
 
@@ -44,8 +45,9 @@ export async function requestPokemonsList(offset, limit){
         return JSON.parse(string)
     }catch(e){
         let response = await getApiInfo(offset, limit);
-        saveInLocalStorage(key, response);
-        return response;
+        let pokemonList = new PokemonList(response);
+        saveInLocalStorage(key, pokemonList);
+        return pokemonList;
     }
 }
 
@@ -59,8 +61,9 @@ export async function requestTypeDetails(id){
         return JSON.parse(string);
     }catch(e){
         let response = await fetchTypeDetails(id);
-        saveInLocalStorage(key, response);
-        return response;
+        let typeRelations = new TypeRelationsDetails(response);
+        saveInLocalStorage(key, typeRelations);
+        return typeRelations;
     }
 }
 
